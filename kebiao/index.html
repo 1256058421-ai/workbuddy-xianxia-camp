@@ -291,7 +291,7 @@ h2.title .em{background:var(--grad);-webkit-background-clip:text;background-clip
 <footer class="ctrl">
   <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">02</span></div>
   <div class="progress"><div class="fill" id="fill"></div></div>
-  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <div class="hint">点击 / 操控笔翻页 &nbsp;·&nbsp; <kbd>←</kbd> <kbd>→</kbd> &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
   <button class="nav-btn" id="prevBtn" title="上一页">←</button>
   <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
 </footer>
@@ -315,22 +315,37 @@ h2.title .em{background:var(--grad);-webkit-background-clip:text;background-clip
     slides[cur].classList.add('active');
     update();
   }
-  function next(){ go(cur+1); }
-  function prev(){ go(cur-1); }
-  document.getElementById('nextBtn').addEventListener('click', next);
-  document.getElementById('prevBtn').addEventListener('click', prev);
+  var lastFlip = 0;
+  function flip(dir){
+    var now = Date.now();
+    if(now - lastFlip < 280) return;
+    lastFlip = now;
+    go(cur + dir);
+  }
+  function next(){ flip(1); }
+  function prev(){ flip(-1); }
+  document.getElementById('nextBtn').addEventListener('click', function(e){ e.stopPropagation(); next(); });
+  document.getElementById('prevBtn').addEventListener('click', function(e){ e.stopPropagation(); prev(); });
   function toggleFs(){
     if(document.fullscreenElement){ document.exitFullscreen(); }
     else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
   }
-  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.getElementById('fsBtn').addEventListener('click', function(e){ e.stopPropagation(); toggleFs(); });
   document.addEventListener('keydown', function(e){
-    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
-    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace'){ e.preventDefault(); prev(); }
     else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
     else if(e.key === 'Home'){ go(0); }
     else if(e.key === 'End'){ go(total-1); }
   });
+  function onStageClick(e){
+    if(e.target.closest('button, a, input, textarea, .fs-btn, .nav-btn')) return;
+    e.preventDefault();
+    if(e.type === 'contextmenu' || e.button === 2) prev();
+    else next();
+  }
+  document.addEventListener('click', onStageClick);
+  document.addEventListener('contextmenu', onStageClick);
   update();
 })();
 </script>
