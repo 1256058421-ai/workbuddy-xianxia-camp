@@ -814,12 +814,24 @@ h2.title .em{
     else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
   }
   document.getElementById('fsBtn').addEventListener('click', function(e){ e.stopPropagation(); toggleFs(); });
+  function isNextKey(e){
+    var k = e.key, c = e.keyCode || e.which;
+    return k === 'ArrowRight' || k === 'ArrowDown' || k === 'Down' || k === ' ' || k === 'PageDown' || k === 'Enter' || c === 39 || c === 40 || c === 34 || c === 13 || c === 32;
+  }
+  function isPrevKey(e){
+    var k = e.key, c = e.keyCode || e.which;
+    return k === 'ArrowLeft' || k === 'ArrowUp' || k === 'Up' || k === 'PageUp' || k === 'Backspace' || c === 37 || c === 38 || c === 33 || c === 8;
+  }
   document.addEventListener('keydown', function(e){
-    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown' || e.key === 'Enter'){ e.preventDefault(); next(); }
-    else if(e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace'){ e.preventDefault(); prev(); }
+    if(isNextKey(e)){ e.preventDefault(); next(); }
+    else if(isPrevKey(e)){ e.preventDefault(); prev(); }
     else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
     else if(e.key === 'Home'){ go(0); }
     else if(e.key === 'End'){ go(total-1); }
+  });
+  document.addEventListener('keyup', function(e){
+    if(isNextKey(e)){ e.preventDefault(); next(); }
+    else if(isPrevKey(e)){ e.preventDefault(); prev(); }
   });
   function onStageClick(e){
     if(e.target.closest('button, a, input, textarea, .fs-btn, .nav-btn')) return;
