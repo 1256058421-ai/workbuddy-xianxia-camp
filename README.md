@@ -10,3 +10,4 @@
 - [数字分身](https://1256058421-ai.github.io/workbuddy-xianxia-camp/fenshen/)
 - [工作台](https://1256058421-ai.github.io/workbuddy-xianxia-camp/gongzuotai/)
 - [数字人](https://1256058421-ai.github.io/workbuddy-xianxia-camp/shuziren/)
+- [HyperFrames 成片](https://1256058421-ai.github.io/workbuddy-xianxia-camp/hyperframes/)

@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY + HyperFrames</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ambient green glows */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+/* ---------- topbar ---------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+/* ---------- slides ---------- */
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+/* kicker / headings */
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:640px;line-height:1.7}
+/* ---------- slide 1 cover ---------- */
+#slide-1{text-align:center}
+.cover-logo{
+  width:104px;height:auto;display:block;margin:0 auto 26px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega.long{
+  flex-direction:column;align-items:center;gap:12px;
+  font-size:clamp(56px,9.5vw,128px);line-height:.95;
+}
+.mega.long .mega-en{
+  font-size:1em;letter-spacing:.1em;font-style:italic;display:block;
+}
+.mega.long .mega-cn{
+  display:flex;align-items:baseline;justify-content:center;gap:10px;
+  font-size:.42em;letter-spacing:.06em;white-space:nowrap;
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.mega.long .mega-cn .arrow{
+  font-size:1em;transform:none;margin-right:2px;
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:640px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+/* ---------- cards ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+/* ---------- shared: giant ghost numeral ---------- */
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+/* ---------- slide 2 : chat vs delivery ---------- */
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+/* ---------- slide 3 : numbered path ---------- */
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+/* ---------- slide 4 : feature split ---------- */
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+/* ---------- slide 5 closing ---------- */
+#slide-17{text-align:center}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:620px;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+/* ---------- control bar ---------- */
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:20%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid.two{grid-template-columns:1fr 1fr}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+#slide-3,#slide-11,#slide-17{text-align:center}
+.say{
+  width:100%;max-width:980px;margin-top:22px;text-align:left;
+  background:linear-gradient(180deg,rgba(1,200,134,.10),rgba(255,255,255,.03));
+  border:1px solid rgba(1,200,134,.38);border-radius:18px;padding:22px 26px 20px;
+  box-shadow:0 18px 50px rgba(1,200,134,.10);
+}
+.say-k{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.say p{font-size:20px;font-weight:700;line-height:1.7}
+.say .mini{margin-top:12px;font-size:13px;color:var(--txt-2);font-weight:500}
+.prompt-pack{
+  width:100%;max-width:1120px;margin-top:12px;
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;text-align:left;
+}
+.prompt-card{
+  background:rgba(1,200,134,.06);border:1px solid rgba(1,200,134,.28);
+  border-radius:16px;padding:12px 16px 14px;
+}
+.prompt-card .pk{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--g2);margin-bottom:6px;
+}
+.prompt-card .pk .n{
+  font:900 italic 18px/1 "Inter",sans-serif;letter-spacing:0;
+  color:transparent;-webkit-text-stroke:1px rgba(1,200,134,.7);
+}
+.prompt-card p{font-size:13px;line-height:1.65;color:var(--txt);font-weight:500}
+.feat-left .big4{font-size:clamp(56px,6vw,92px)}
+.cam-row{display:flex;gap:32px;align-items:center;width:100%;max-width:1080px;margin-top:22px}
+.cam{
+  width:214px;flex-shrink:0;aspect-ratio:9/16;border-radius:28px;
+  border:1px solid rgba(1,200,134,.42);
+  background:linear-gradient(180deg,rgba(1,200,134,.10),rgba(255,255,255,.02));
+  box-shadow:0 24px 60px rgba(1,200,134,.12);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.cam-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 0 6px}
+.cam-dot{width:10px;height:10px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.cam-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 16px}
+.cam-time{font:900 italic 42px/1 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cam-label{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--txt-3)}
+.count{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.count i{
+  min-width:28px;height:28px;padding:0 6px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font:800 13px/1 "Inter",sans-serif;color:#04110b;background:var(--grad);
+}
+.cam-foot{padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--g2);border-top:1px solid var(--line);letter-spacing:.08em}
+.cam-copy{flex:1;text-align:left}
+.cam-copy h3{font-size:24px;font-weight:900;margin-bottom:12px}
+.cam-copy p{font-size:15px;color:var(--txt-2);line-height:1.75;margin-bottom:14px}
+.cam-copy .steps li{font-size:14.5px}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid,.prompt-pack{grid-template-columns:1fr 1fr}
+  .cam-row{flex-direction:column}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">线下实战营 · HyperFrames</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega long rise" style="--i:1">
+    <span class="mega-en">WORKBUDDY</span>
+    <span class="mega-cn"><span class="arrow">+</span>成片</span>
+  </h1>
+  <div class="cover-sub rise" style="--i:2">会动的网页 PPT，按你的音频<span class="em">拼成一条视频</span></div>
+  <p class="cover-desc rise" style="--i:3">HyperFrames 不是短剧。很多网页粘在一起，就是一条片子。声音用上一节克隆的。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">先通一条</span>
+    <span class="chip"><span class="gt">&gt;</span>不是短剧</span>
+    <span class="chip"><span class="gt">&gt;</span>声用上一节</span>
+    <span class="chip"><span class="gt">&gt;</span>最后一页提示词</span>
+  </div>
+</section>
+
+<!-- 02 交班 -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WE ARE HERE</div>
+  <h2 class="title rise" style="--i:1">刚才是数字人。<span class="em">现在换成片。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">上一节 · 数字人</span></div>
+      <div class="pane-body">
+        <div class="msg b">网站出的是你的脸，加上克隆的声音。</div>
+        <div class="msg t">15 秒形象还在。克隆音频也还在。这一节不要重拍、不要重克隆。</div>
+      </div>
+      <div class="pane-foot">脸在网站 · 声也在网站</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">这一节 · HYPERFRAMES</span><span class="live">接着做</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">网页 PPT 画面，按音频拼成片</div>
+          <ul class="steps">
+            <li class="ok">声音：用刚才那条克隆音频</li>
+            <li class="ok">画面：大字幕、图解、会动的网页</li>
+            <li class="run">工具：WorkBuddy 里装 HyperFrames 插件</li>
+          </ul>
+          <div class="dlv"><span class="file">克隆音频</span><span class="file">竖屏 MP4</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">人还是你 · 片换成知识口播</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 一句话 -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>ONE SENTENCE</div>
+  <h2 class="quote rise" style="--i:2">它不是短剧。<br>它是会动的<span class="em">网页 PPT</span></h2>
+  <p class="quote-2 rise" style="--i:3">很多网页拼在一起。各式 PPT 粘成一条视频。不是给人点着翻，是按口播时间轴自动切、自动动。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip"><span class="gt">&gt;</span>先有音频，才有多长</span>
+    <span class="chip yellow">粘在一起 = 一条片子</span>
+  </div>
+</section>
+
+<!-- 04 两条路 -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TWO ROUTES</div>
+  <h2 class="title rise" style="--i:1">跟漫剧、短剧<span class="em">不是一条路</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">漫剧 / 短剧 / 即梦</span></div>
+      <div class="pane-body">
+        <div class="msg u">我想做短剧、做大片</div>
+        <div class="msg b">要调外部生成模型。画面写实，按秒计费。</div>
+        <div class="msg t">那是另一个战场。今天下午不教这一条。</div>
+      </div>
+      <div class="pane-foot">按秒花钱 · 真人剧情</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">今晚这条 · HYPERFRAMES</span><span class="live">免费路线</span></div>
+      <div class="pane-body">
+        <div class="msg u">我要发知识口播</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">电脑把网页一帧帧截成 MP4</div>
+          <ul class="steps">
+            <li class="ok">画面像 PPT，但会动、有字幕</li>
+            <li class="ok">不生成写实人物</li>
+            <li class="run">本地跑，不按秒买模型</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">0 元随便跑 · 适合口播获客</div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 边界 -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>FIT / NOT FIT</div>
+  <h2 class="title rise" style="--i:1">先看清边界。<span class="em">别拿去跟即梦比。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">主场</div>
+      <div class="feat-lt">知识口播<em>才是它的活</em></div>
+      <p class="feat-ld">大字幕、图解、机制讲解。要写实人物、短剧运镜，回去走生成模型，别卡在这一节。</p>
+      <span class="cloud-pill"><i class="pdot"></i>今晚只吃免费产能</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>适合</h3><p>知识口播、图解、大字幕、把一个机制讲清楚。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>不适合</h3><p>短剧、写实人物、大片运镜。那是另一条付费路。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>别比画面</h3><p>不要跟即梦比像不像真人。比的是能不能量产口播。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>现场产物</h3><p>一条竖屏 MP4。能打开、能发，这条练习就算过。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 四步地图 -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>COURSE MAP</div>
+  <h2 class="title rise" style="--i:1">单条就四步。<span class="em">先看地图。</span></h2>
+  <p class="sub rise" style="--i:2">文案 → 音频 → 插件 → 出片。每一步都要看见产物，不要糊成一句「丢给它」。</p>
+  <div class="path tight rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">文案</span><span class="p-name">口播稿自己定</span></div><span class="p-desc">最好剪蒸馏公众号</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">音频</span><span class="p-name">用上一节克隆声配出来</span></div><span class="p-desc">产物是一条 MP3</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">插件</span><span class="p-name">安装 HyperFrames</span></div><span class="p-desc">装一次，后面一直用</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">出片</span><span class="p-name">音频 + 风格，丢进去</span></div><span class="p-desc">等它出竖屏 MP4</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 07 文案 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 01 · COPY</div>
+  <h2 class="title rise" style="--i:1">文案你自己定。<span class="em">最好别从零写。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">稿</div>
+      <div class="feat-lt">先有字，<em>才有声</em></div>
+      <p class="feat-ld">下午蒸馏出来的口播稿，直接剪一段来用。第一句就是钩子。写完自己读一遍，拗口的地方先改掉。</p>
+      <span class="cloud-pill"><i class="pdot"></i>现场建议 30–45 秒，太长渲染不完</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>接蒸馏</h3><p>同一篇公众号里，剪最扎心的一个点，就是短视频文案。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>第一句钩子</h3><p>开头就要把人拦住。平铺直叙的第一句，后面画面救不回来。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>先读一遍</h3><p>拗口就改。别等音频出了再改稿，会整条重做。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>控制长度</h3><p>现场先短。通了再加长。太长，全场都在等渲染。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 音频 -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 02 · VOICE</div>
+  <h2 class="title rise" style="--i:1">配音走上一节网站。<span class="em">不要让它配音。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">现场不要这么做</span></div>
+      <div class="pane-body">
+        <div class="msg u">文案丢给 HyperFrames，让它生成音频</div>
+        <div class="msg b">那你上一节克隆的声音，就浪费了。</div>
+        <div class="msg t">两条配音入口同时讲，助教要救两个坑。</div>
+      </div>
+      <div class="pane-foot">HyperFrames 不是配音工具</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">现场只留这一个入口</span><span class="live">克隆音色</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">字拿到网站，出一条你的声</div>
+          <ul class="steps">
+            <li class="ok">文案已经定了</li>
+            <li class="ok">登录上一节的网站，用克隆音色配音</li>
+            <li class="run">产物：一条口播 MP3，再丢给 HyperFrames</li>
+          </ul>
+          <div class="dlv"><span class="file">口播.mp3</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">字是你写的 · 声是你的 · 片另做</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 装插件 -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 03 · PLUGIN</div>
+  <h2 class="title rise" style="--i:1">先装插件。<span class="em">装一次，一直用。</span></h2>
+  <div class="say rise" style="--i:2">
+    <div class="say-k"><span class="gt">&gt;</span>丢给 WORKBUDDY 的原话</div>
+    <p>安装 HyperFrames 这个插件。</p>
+    <div class="mini">不用自己找安装包。原话丢进去。装好了让它告诉你一声，再进入下一步。</div>
+  </div>
+  <div class="xgrid two rise" style="--i:3">
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>装一次就行</h3><p>后面出片不用再装。今天装上，回家还能用。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>装不上找助教</h3><p>这一步卡住，不要在主麦上修电脑。举手，助教过来。</p></div>
+  </div>
+</section>
+
+<!-- 10 出片 -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 04 · RENDER</div>
+  <h2 class="title rise" style="--i:1">音频丢进去。<span class="em">风格要先说清。</span></h2>
+  <div class="say rise" style="--i:2">
+    <div class="say-k"><span class="gt">&gt;</span>把配音文件一起丢进去</div>
+    <p>根据这份配音生成整条视频，风格是竖屏知识口播，暗色底，大字幕，关键词绿色，画面要有动效。</p>
+    <div class="mini">不说风格，出来的就是随机 PPT。发出去就等，不要中途打断。</div>
+  </div>
+  <div class="eco-strip rise" style="--i:3">
+    <span class="eco-label"><span class="gt">&gt;</span>这一步你要给齐</span>
+    <div class="eco-chips">
+      <span class="eco-chip">口播 MP3</span>
+      <span class="eco-chip">竖屏</span>
+      <span class="eco-chip">暗色</span>
+      <span class="eco-chip">大字幕</span>
+      <span class="eco-chip">带动效</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 演示 -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>WATCH FIRST</div>
+  <h2 class="quote rise" style="--i:2">我先做一遍。<span class="em">你们先看。</span></h2>
+  <p class="quote-2 rise" style="--i:3">装插件 → 丢音频 → 说风格 → 等出片。流程看清楚了，再动手。现在先别自己点。</p>
+  <button class="cta rise" style="--i:4">看我操作一遍<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">先看</span>
+    <span class="chip">再做</span>
+    <span class="chip yellow">发出去就等</span>
+  </div>
+</section>
+
+<!-- 12 第一版 -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NOT DONE</div>
+  <h2 class="title rise" style="--i:1">第一版出来，<span class="em">才是刚开始。</span></h2>
+  <p class="sub rise" style="--i:2">导出 MP4 不是下课。这一步把片子从「能看」磨到「能发」。</p>
+  <div class="xgrid rise" style="--i:3">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>字幕</h3><p>大了小了、挡住画面、跟口播错位。直接说哪里不对。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>颜色</h3><p>哪一块刺眼、哪一个词要绿。点名改，别说「再好看一点」。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>动效 / 节奏</h3><p>全静态不行。切页快了慢了，让它跟口播对齐。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:4">调到对为止。<b>不要指望一次成型。</b></p>
+</section>
+
+<!-- 13 三种改法 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THREE FIXES</div>
+  <h2 class="title rise" style="--i:1">现场只教三种改法。</h2>
+  <div class="xgrid rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>改画面</h3><p>字幕、颜色、动效、切页。看完第一条，把不满意的那一句丢回去。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>加 BGM</h3><p>自己下载一条发给它。告诉它：整条视频都用这个，不要盖过口播。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>叠数字人</h3><p>上一节的数字人可以叠进右上角。位置说死，不要挡住字幕。这是加分，不是必做。</p></div>
+  </div>
+  <div class="eco-strip rise" style="--i:3">
+    <span class="eco-label"><span class="gt">&gt;</span>人可以后叠</span>
+    <div class="eco-chips">
+      <span class="eco-chip">先保证底片能出</span>
+      <span class="eco-chip">右上 / 正下，说死</span>
+      <span class="eco-chip">通了再谈叠人</span>
+    </div>
+  </div>
+</section>
+
+<!-- 14 等待助教 -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WAIT / TA</div>
+  <h2 class="title rise" style="--i:1">发出去就等。<span class="em">这四类找助教。</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">插件</span><span class="p-name">装不上 HyperFrames</span></div><span class="p-desc">举手，助教过来</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">音频</span><span class="p-name">MP3 传不进去</span></div><span class="p-desc">别反复重发</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">等待</span><span class="p-name">一直转圈，中途不要打断</span></div><span class="p-desc">渲染吃电脑</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">成片</span><span class="p-name">出来是静音 / 打不开</span></div><span class="p-desc">把文件给助教看</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">主麦不修电脑。<b>卡住举手，AI 在跑的时候业务问题可以来找我。</b></p>
+</section>
+
+<!-- 15 验收 -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>CHECK · 1 VIDEO</div>
+  <h2 class="title rise" style="--i:1">现场目标：<span class="em">每人一条能打开的 MP4</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">过关</div>
+      <div class="feat-lt">四项都有，<em>这条练习就算过</em></div>
+      <p class="feat-ld">调美、叠人、批量，都是加分。先过这四项。做完截图发群：第几个练习、什么行业。</p>
+      <span class="cloud-pill"><i class="pdot"></i>理论 → 我做一遍 → 看案例 → 你自己做</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>有画面</h3><p>不是黑屏。打开就能看见字幕卡或图解。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>有字幕</h3><p>口播对应的字在画面上。没有字幕，回去补一句。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>声画大致同步</h3><p>不要求帧级对齐。明显错位，就让它改切页。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>能全屏打开</h3><p>文件在，能播完。播不了的，不算做完。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 批量 -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>BATCH</div>
+  <h2 class="title rise" style="--i:1">批量不是新技能。<span class="em">是把一条复制 n 次。</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">前提</span><span class="p-name">先跑通 1 条</span></div><span class="p-desc">同一风格、同一音色</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">输入</span><span class="p-name">多条不同的音频</span></div><span class="p-desc">每条对应不同文案</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">做法</span><span class="p-name">一个任务里丢一批</span></div><span class="p-desc">不要同时开 100 个窗口</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">现场</span><span class="p-name">10 条、100 条是回家作业</span></div><span class="p-desc">当场先出 1 条</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">先命名、先分文件夹。<b>否则 10 条出来，分不清哪条是谁的。</b></p>
+</section>
+
+<!-- 17 收束 -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>YOUR MOVE</div>
+  <h2 class="quote rise" style="--i:2">先做通一条。<br>一条通了，十条只是把音频<span class="em">换成很多份</span></h2>
+  <p class="quote-2 rise" style="--i:3">下一页六段提示词，按步骤整串复制。现在先出你的第一条。</p>
+  <button class="cta rise" style="--i:4">现在，先出你的第一条<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">文案 → 音频 → 插件 → 出片</span>
+    <span class="chip yellow">翻到最后一页复制</span>
+  </div>
+</section>
+
+<!-- 18 提示词 -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>COPY THIS · 六段提示词</div>
+  <h2 class="title rise" style="--i:1">按步骤整串复制。<span class="em">不要跳着发。</span></h2>
+  <div class="prompt-pack rise" style="--i:2">
+    <div class="prompt-card">
+      <div class="pk"><span class="n">01</span>装插件</div>
+      <p>安装 HyperFrames 这个插件。装好告诉我一声，先不要做视频。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">02</span>出第一条</div>
+      <p>我把口播音频发给你了。请用 HyperFrames 根据这份配音，生成一条竖屏知识口播视频。风格：暗色底、大字幕、关键词绿色、画面要有动效。先出完整第一条，不要中途停下来问我。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">03</span>改第一版</div>
+      <p>第一条我看过了。按我说的改：【字幕太大 / 颜色不对 / 动效不够 / 切页跟口播不齐】。改完把成片给我。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">04</span>加 BGM</div>
+      <p>这首 BGM 也发给你了。整条视频都用它，声音不要盖过口播。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">05</span>叠数字人 · 可选</div>
+      <p>把我上一节生成的数字人视频，叠在画面右上角。位置说死：右上。不要挡住字幕。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">06</span>批量</div>
+      <p>这些是多条不同的口播音频。按刚才第一条的同一风格、同一字幕规则，每条音频各生成一条视频。用音频文件名命名。先通一条的规则不要改。</p>
+    </div>
+  </div>
+</section>
+
+<!-- control bar -->
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">05</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
