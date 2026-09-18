@@ -2,6 +2,7 @@
 
 左右方向键 / 空格翻页，F 全屏。
 
+- [两天课表](https://1256058421-ai.github.io/workbuddy-xianxia-camp/kebiao/)
 - [AI 编程使用心法](https://1256058421-ai.github.io/workbuddy-xianxia-camp/)
 - [IMA 知识库不是网盘](https://1256058421-ai.github.io/workbuddy-xianxia-camp/ima/)
 - [内部资料整理](https://1256058421-ai.github.io/workbuddy-xianxia-camp/neibu/)

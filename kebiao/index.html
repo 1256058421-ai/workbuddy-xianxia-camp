@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY 线下课实战营 · 两天课表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.wb-mark{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.wb-word{
+  display:flex;flex-direction:column;justify-content:center;
+  font-weight:900;letter-spacing:.06em;font-size:11px;line-height:.92;color:#fff;
+}
+.wb-word span{display:block}
+.topbar .cat{width:32px;height:32px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.gt{font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;overflow:hidden;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;margin-bottom:14px;text-align:center}
+h2.title .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+#slide-1{text-align:center}
+.cover-logo{width:92px;height:auto;display:block;margin:0 auto 26px;filter:drop-shadow(0 10px 30px rgba(1,200,134,.30))}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62), 0 0 90px rgba(1,200,134,.22);
+}
+.mega.long{flex-direction:column;align-items:center;gap:12px;font-size:clamp(56px,9.5vw,128px);line-height:.95}
+.mega.long .mega-en{font-size:1em;letter-spacing:.1em;font-style:italic;display:block}
+.mega.long .mega-cn{display:flex;align-items:baseline;justify-content:center;font-size:.38em;letter-spacing:.06em;white-space:nowrap}
+.cover-sub{margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow)}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.skd{display:flex;gap:16px;width:100%;max-width:1180px;margin-top:18px;align-items:stretch}
+.skd-col{
+  flex:1;display:flex;flex-direction:column;gap:8px;text-align:left;
+  background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;
+}
+.skd-col.sun{border-color:rgba(1,200,134,.4);background:linear-gradient(180deg,rgba(1,200,134,.08),rgba(255,255,255,.02))}
+.skd-h{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:6px}
+.skd-h b{font-size:22px;font-weight:900}
+.skd-h span{font-size:13px;font-weight:700;color:var(--g2)}
+.skd-block{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.skd-block em{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);margin-bottom:4px}
+.skd-block p{font-size:14px;font-weight:700;line-height:1.55;color:var(--txt)}
+.skd-rest{font-size:12px;font-weight:700;color:var(--txt-3);text-align:center;border:1px dashed var(--line);border-radius:999px;padding:6px 10px}
+.path{width:100%;max-width:1080px;margin-top:22px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:52px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-tag.yellow{color:var(--yellow);border-color:rgba(255,227,85,.45);background:rgba(255,227,85,.10)}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);margin-left:auto;text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.path.tight .p-row{padding:10px 16px}
+.path.tight .p-num{min-width:44px;font-size:28px}
+.path.tight .p-name{font-size:17px}
+.flow5{display:flex;align-items:stretch;gap:6px;width:100%;max-width:1200px;margin-top:26px}
+.flow-step{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 13px 14px}
+.flow-step.hot{border-color:rgba(1,200,134,.5);background:rgba(1,200,134,.08)}
+.flow-n{font:900 italic 22px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.1px rgba(1,200,134,.55)}
+.flow-step.hot .flow-n{-webkit-text-stroke:0;color:var(--g2);text-shadow:0 0 16px rgba(1,200,134,.45)}
+.flow-step h3{font-size:15px;font-weight:900;line-height:1.35}
+.flow-step p{font-size:12px;color:var(--txt-2);line-height:1.5}
+.flow-gt{align-self:center;flex:0 0 auto;font-size:20px;font-weight:900;font-style:italic;color:var(--g2)}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);font-variant-numeric:tabular-nums;min-width:64px}
+.pageno b{color:#fff;font-weight:800}
+.progress{flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden}
+.progress .fill{height:100%;width:20%;border-radius:99px;background:var(--grad);box-shadow:0 0 12px rgba(1,200,134,.6);transition:width .55s cubic-bezier(.22,1,.36,1)}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{font-family:inherit;font-size:10.5px;color:var(--txt-2);border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel)}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{background:var(--grad);border:none;color:#04110b;box-shadow:0 6px 20px rgba(1,200,134,.3)}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .skd,.flow5{flex-direction:column}
+  .flow-gt{transform:rotate(90deg);align-self:center}
+  .p-desc{display:none}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wb-mark">
+    <div class="wb-word">WORK<span>BUDD</span></div>
+    <img class="cat" src="ref/wb-icon.svg" alt="WorkBuddy">
+  </div>
+  <div class="divider"></div>
+  <div class="lesson">线下实战营 · 两天课表</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy logo">
+  <h1 class="mega long rise" style="--i:1">
+    <span class="mega-en">WORKBUDDY</span>
+    <span class="mega-cn">两天课表</span>
+  </h1>
+  <div class="cover-sub rise" style="--i:2">9 月 19 日 — 9 月 20 日</div>
+  <div class="chips rise" style="--i:3">
+    <span class="chip yellow">周六早 9 到晚 9</span>
+    <span class="chip"><span class="gt">&gt;</span>周日早 9 到下午 6</span>
+    <span class="chip"><span class="gt">&gt;</span>午休 2 小时</span>
+  </div>
+</section>
+
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>SCHEDULE · 两天课表</div>
+  <h2 class="title rise" style="--i:1">两天怎么排，<span class="em">先看这一张</span></h2>
+  <div class="skd rise" style="--i:2">
+    <div class="skd-col">
+      <div class="skd-h"><b>周六 9.19</b><span>早 9 点 — 晚 9 点</span></div>
+      <div class="skd-block"><em>上午</em><p>课怎么上 · 9 个用法 · 知识库</p></div>
+      <div class="skd-rest">午休 2 小时</div>
+      <div class="skd-block"><em>下午 · 四个练习</em><p>内部资料 · 外部资料 · 个人网站 · 数字分身</p></div>
+      <div class="skd-rest">晚饭大约 1 小时</div>
+      <div class="skd-block"><em>晚上</em><p>搭工作台（个人 / 团队）· 业务答疑</p></div>
+    </div>
+    <div class="skd-col sun">
+      <div class="skd-h"><b>周日 9.20</b><span>早 9 点 — 下午 6 点</span></div>
+      <div class="skd-block"><em>上午</em><p>自媒体先讲半小时 · 迪老师讲获客，大概一个半小时</p></div>
+      <div class="skd-rest">午休 2 小时</div>
+      <div class="skd-block"><em>下午</em><p>蒸馏做公众号 · 数字人视频 · HyperFrames 批量做视频</p></div>
+      <div class="skd-rest">下午 6 点结束</div>
+    </div>
+  </div>
+</section>
+
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>DAY 1 · 周六</div>
+  <h2 class="title rise" style="--i:1">周六：从用法，<span class="em">做到自己的东西</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><div class="p-num">01</div><div class="p-main"><span class="p-tag">上午</span><span class="p-name">先看课怎么上，再讲 9 个用法</span><span class="p-desc">每个怎么做、思路是什么</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">02</div><div class="p-main"><span class="p-tag">上午</span><span class="p-name">知识库是什么，怎么梳</span><span class="p-desc">概念先讲清</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">03</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">内部资料整理，出 PPT / HTML / 表 / Word</span><span class="p-desc">自己的资料或订阅库</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">04</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">外部资料收成一张表，再按表往外写</span><span class="p-desc">比如股市这些外面的信息</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">05</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">AI 反问你，做自己的个人网站</span><span class="p-desc">品牌官网也能做 · 助教陪着</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">06</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">网站上加数字分身，按你的内容来答</span><span class="p-desc">像你本人在回</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">07</div><div class="p-main"><span class="p-tag">晚上</span><span class="p-name">搭工作台：个人用、团队用，两种都教</span><span class="p-desc">晚饭后开始</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">08</div><div class="p-main"><span class="p-tag yellow">晚上</span><span class="p-name">业务答疑，把你的流程理一遍</span><span class="p-desc">集中问</span></div><div class="p-gt">&gt;</div></div>
+  </div>
+</section>
+
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>DAY 2 · 周日</div>
+  <h2 class="title rise" style="--i:1">周日：获客、公众号，<span class="em">再批量出视频</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><div class="p-num">01</div><div class="p-main"><span class="p-tag">上午</span><span class="p-name">自媒体全链路，先讲清楚，大约半小时</span><span class="p-desc">讲完留一点答疑</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">02</div><div class="p-main"><span class="p-tag yellow">上午</span><span class="p-name">迪老师讲怎么获客，直播、新玩法都有</span><span class="p-desc">大概一个半小时，能问</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">03</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">批量做公众号，用蒸馏做出一篇</span><span class="p-desc">一篇一篇能复制</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">04</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">用我们提供的网站，做你自己的数字人视频</span><span class="p-desc">每个人一份</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">05</div><div class="p-main"><span class="p-tag">下午</span><span class="p-name">HyperFrames 批量做视频</span><span class="p-desc">下午 6 点结束</span></div><div class="p-gt">&gt;</div></div>
+  </div>
+</section>
+
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>HOW WE TEACH · 上课流程</div>
+  <h2 class="title rise" style="--i:1">每次都按这<span class="em">五步</span>走</h2>
+  <div class="flow5 rise" style="--i:2">
+    <div class="flow-step"><div class="flow-n">01</div><h3>先讲理论</h3><p>这一步为什么这么做。</p></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-step"><div class="flow-n">02</div><h3>我做一遍</h3><p>整套流程你先看清楚。</p></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-step hot"><div class="flow-n">03</div><h3>看案例</h3><p>都是同学自己的，知识库里领。</p></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-step"><div class="flow-n">04</div><h3>答疑</h3><p>卡住的现在问。</p></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-step"><div class="flow-n">05</div><h3>你自己做</h3><p>助教陪着，把流程做完。</p></div>
+  </div>
+</section>
+
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NOTES · 注意事项</div>
+  <h2 class="title rise" style="--i:1">做完把截图发群，<span class="em">有事就问</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><div class="p-num">01</div><div class="p-main"><span class="p-tag yellow">发群</span><span class="p-name">每次做完，截图丢群里。写上第几个练习、你是什么行业</span><span class="p-desc">别人也能看着学</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">02</div><div class="p-main"><span class="p-tag">知识库</span><span class="p-name">案例都是你们做的，我放知识库了，自己下就行</span><span class="p-desc">不用再找我要</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">03</div><div class="p-main"><span class="p-tag">实操</span><span class="p-name">操作不会就喊助教，别闷头硬憋</span><span class="p-desc">他们就在旁边</span></div><div class="p-gt">&gt;</div></div>
+    <div class="p-row"><div class="p-num">04</div><div class="p-main"><span class="p-tag">业务</span><span class="p-name">AI 还在跑的时候，业务想聊就过来找我，我就在现场</span><span class="p-desc">不用等下课</span></div><div class="p-gt">&gt;</div></div>
+  </div>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">02</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
