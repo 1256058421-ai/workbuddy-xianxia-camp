@@ -124,11 +124,15 @@ h2.title .em{
 }
 .mega.mid{font-size:clamp(48px,8vw,108px)}
 .mega.long{
-  flex-direction:column;align-items:center;gap:10px;
-  font-size:clamp(40px,6.2vw,86px);line-height:1.05;
+  flex-direction:column;align-items:center;gap:12px;
+  font-size:clamp(56px,9.5vw,128px);line-height:.95;
 }
 .mega.long .mega-en{
-  font-size:.42em;letter-spacing:.18em;font-style:italic;
+  font-size:1em;letter-spacing:.1em;font-style:italic;display:block;
+}
+.mega.long .mega-cn{
+  display:flex;align-items:baseline;justify-content:center;gap:8px;
+  font-size:.38em;letter-spacing:.06em;white-space:nowrap;
 }
 .mega .arrow{
   background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
@@ -633,7 +637,7 @@ h2.title .em{
   <img class="cover-logo rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy logo">
   <h1 class="mega long rise" style="--i:1">
     <span class="mega-en">WORKBUDDY</span>
-    线下课<span class="arrow">&gt;</span>实战营
+    <span class="mega-cn">线下课实战营</span>
   </h1>
   <div class="cover-sub rise" style="--i:2">AI 编程使用心法</div>
   <div class="chips rise" style="--i:4">
