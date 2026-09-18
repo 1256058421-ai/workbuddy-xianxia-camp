@@ -9,3 +9,4 @@
 - [个人网站 / 品牌官网](https://1256058421-ai.github.io/workbuddy-xianxia-camp/wangzhan/)
 - [数字分身](https://1256058421-ai.github.io/workbuddy-xianxia-camp/fenshen/)
 - [工作台](https://1256058421-ai.github.io/workbuddy-xianxia-camp/gongzuotai/)
+- [数字人](https://1256058421-ai.github.io/workbuddy-xianxia-camp/shuziren/)

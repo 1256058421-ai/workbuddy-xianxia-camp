@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY + 数字人</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+/* ambient green glows */
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+/* ---------- topbar ---------- */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+/* ---------- slides ---------- */
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+/* kicker / headings */
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:640px;line-height:1.7}
+/* ---------- slide 1 cover ---------- */
+#slide-1{text-align:center}
+.cover-logo{
+  width:104px;height:auto;display:block;margin:0 auto 26px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega.long{
+  flex-direction:column;align-items:center;gap:12px;
+  font-size:clamp(56px,9.5vw,128px);line-height:.95;
+}
+.mega.long .mega-en{
+  font-size:1em;letter-spacing:.1em;font-style:italic;display:block;
+}
+.mega.long .mega-cn{
+  display:flex;align-items:baseline;justify-content:center;gap:10px;
+  font-size:.42em;letter-spacing:.06em;white-space:nowrap;
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.mega.long .mega-cn .arrow{
+  font-size:1em;transform:none;margin-right:2px;
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:640px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+/* ---------- cards ---------- */
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+/* ---------- shared: giant ghost numeral ---------- */
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+/* ---------- slide 2 : chat vs delivery ---------- */
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+/* ---------- slide 3 : numbered path ---------- */
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+/* ---------- slide 4 : feature split ---------- */
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+/* ---------- slide 5 closing ---------- */
+#slide-16{text-align:center}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:620px;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+/* ---------- control bar ---------- */
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:20%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid.two{grid-template-columns:1fr 1fr}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+#slide-3,#slide-15,#slide-16{text-align:center}
+.cam-row{display:flex;gap:32px;align-items:center;width:100%;max-width:1080px;margin-top:22px}
+.cam{
+  width:214px;flex-shrink:0;aspect-ratio:9/16;border-radius:28px;
+  border:1px solid rgba(1,200,134,.42);
+  background:linear-gradient(180deg,rgba(1,200,134,.10),rgba(255,255,255,.02));
+  box-shadow:0 24px 60px rgba(1,200,134,.12);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.cam-bar{display:flex;align-items:center;justify-content:center;gap:8px;padding:14px 0 6px}
+.cam-dot{width:10px;height:10px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.cam-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px 16px}
+.cam-time{font:900 italic 42px/1 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cam-label{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--txt-3)}
+.count{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.count i{
+  min-width:28px;height:28px;padding:0 6px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  font:800 13px/1 "Inter",sans-serif;color:#04110b;background:var(--grad);
+}
+.cam-foot{padding:12px;text-align:center;font-size:12px;font-weight:700;color:var(--g2);border-top:1px solid var(--line);letter-spacing:.08em}
+.cam-copy{flex:1;text-align:left}
+.cam-copy h3{font-size:24px;font-weight:900;margin-bottom:12px}
+.cam-copy p{font-size:15px;color:var(--txt-2);line-height:1.75;margin-bottom:14px}
+.cam-copy .steps li{font-size:14.5px}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid{grid-template-columns:1fr 1fr}
+  .cam-row{flex-direction:column}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- topbar -->
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">线下实战营 · 数字人</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega long rise" style="--i:1">
+    <span class="mega-en">WORKBUDDY</span>
+    <span class="mega-cn"><span class="arrow">+</span>数字人</span>
+  </h1>
+  <div class="cover-sub rise" style="--i:2">准备两样东西，现场就能<span class="em">出片</span></div>
+  <p class="cover-desc rise" style="--i:3">15 秒视频 + 克隆声音。登录我们给的网站，输入文字，生成你的数字人视频和音频。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">每个人一份</span>
+    <span class="chip"><span class="gt">&gt;</span>15 秒视频</span>
+    <span class="chip"><span class="gt">&gt;</span>克隆声音</span>
+    <span class="chip"><span class="gt">&gt;</span>我们提供网站</span>
+  </div>
+</section>
+
+<!-- 02 衔接 -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WE ARE HERE</div>
+  <h2 class="title rise" style="--i:1">后面这两个部分，<span class="em">就是数字人板块。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">前面已经讲完</span></div>
+      <div class="pane-body">
+        <div class="msg b">前面的板块告一段落。</div>
+        <div class="msg t">现在切到数字人。这一段要动手，不是只听。</div>
+      </div>
+      <div class="pane-foot">讲完了 · 进入实操</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">数字人 · 两个部分</span><span class="live">现场做</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">现场要完成这两件事</div>
+          <ul class="steps">
+            <li class="ok">数字人视频的生成</li>
+            <li class="run">克隆音频的生成</li>
+          </ul>
+          <div class="dlv"><span class="file">15秒视频</span><span class="file">克隆音频</span><span class="file">网站出片</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">用我们提供的网站 · 每个人一份</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 记住的一句话 -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>ONE SENTENCE</div>
+  <h2 class="quote rise" style="--i:1">不是看演示。<br>每个人都要做出<span class="em">一份自己的</span></h2>
+  <p class="quote-2 rise" style="--i:2">拍 15 秒、准备音频、登录网站、输入文字。视频和声音，当场生成。</p>
+  <div class="chips rise" style="--i:3">
+    <span class="chip"><span class="gt">&gt;</span>先拍视频</span>
+    <span class="chip"><span class="gt">&gt;</span>再克隆声音</span>
+    <span class="chip yellow">我先操作一遍</span>
+  </div>
+</section>
+
+<!-- 04 准备两样 -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>PREP TWO</div>
+  <h2 class="title rise" style="--i:1">先准备两样东西。<span class="em">缺一样，网站用不了。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">2</div>
+      <div class="feat-lt">只要<em>两样</em></div>
+      <p class="feat-ld">第一件：对着镜头拍 15 秒。第二件：准备好用来克隆的音频。两样齐了，再登录网站。</p>
+      <span class="cloud-pill"><i class="pdot"></i>没准备也没关系 · 现场一分钟能拍</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>15 秒视频</h3><p>对着自己拍。念 1 2 3 4 5 6 7 就可以，先把视频拍下来。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>克隆音频</h3><p>准备好你们的音频，用来克隆声音。后面输入文字，就按这个声音出。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>网站登录</h3><p>这两样准备好之后，登录我们给到你的网站，开始生成。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>输入文字</h3><p>把要说的文字内容输进去，它按你的声音克隆音频，再生成数字人视频。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 以前 vs 现在 -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHY THIS WAY</div>
+  <h2 class="title rise" style="--i:1">不是让你现在去拍长视频。<span class="em">是用网站生成。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">以前</span></div>
+      <div class="pane-body">
+        <div class="msg u">我想出一条口播视频</div>
+        <div class="msg b">得自己出镜、自己念、自己剪。</div>
+        <div class="msg t">现场没有条件拍长内容。嗓子和镜头，都会卡住产能。</div>
+      </div>
+      <div class="pane-foot">人得出镜 · 人得念完 · 人得剪</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">现在 · 数字人</span><span class="live">网站生成</span></div>
+      <div class="pane-body">
+        <div class="msg u">我把 15 秒和音频准备好了</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">登录网站，输入文字就能出</div>
+          <ul class="steps">
+            <li class="ok">15 秒视频：对着镜头拍自己</li>
+            <li class="ok">音频：用来克隆你的声音</li>
+            <li class="run">文字输进去 → 克隆音频 + 数字人视频</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">拍一次形象 · 后面按文字生成</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 全景 -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>COURSE MAP</div>
+  <h2 class="title rise" style="--i:1">现场全流程 · <span class="em">6 步走完</span></h2>
+  <p class="sub rise" style="--i:2">先看地图。我操作一遍，再轮到你们。</p>
+  <div class="path tight rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">拍</span><span class="p-name">15 秒视频，对着镜头拍自己</span></div><span class="p-desc">念 1234567 就可以</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">声</span><span class="p-name">准备好音频，用来克隆声音</span></div><span class="p-desc">第二件必须有</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">登</span><span class="p-name">登录我们给到你的网站</span></div><span class="p-desc">打开就能进</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">写</span><span class="p-name">把文字内容输入进去</span></div><span class="p-desc">你要它说的那句话</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">音</span><span class="p-name">生成按你声音克隆的音频</span></div><span class="p-desc">第一个部分</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">06</span><div class="p-main"><span class="p-tag">片</span><span class="p-name">生成你的数字人视频</span></div><span class="p-desc">每个人一份</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 07 第一件 15秒 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THING 01 · VIDEO</div>
+  <h2 class="title rise" style="--i:1">第一件：<span class="em">拍一段 15 秒视频。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">15</div>
+      <div class="feat-lt">只要<em>十五秒</em></div>
+      <p class="feat-ld">对着你们自己拍。不需要长稿，不需要表演。把人拍清楚，这段视频后面用来生成数字人。</p>
+      <span class="cloud-pill"><i class="pdot"></i>念 1 2 3 4 5 6 7 就可以</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>对着人拍</h3><p>镜头对着你自己。脸在画面里，声音能录上。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>先拍下来</h3><p>这一步只负责拍。剪辑、文案、成片，都不是现在的事。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>十五秒就够</h3><p>不用拍长。网站要的是这段形象视频，不是一条完整口播。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>不会拍找助教</h3><p>现场没有拍的，助教老师来帮各位拍。大概一分钟。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 怎么拍 -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>HOW TO SHOOT</div>
+  <h2 class="title rise" style="--i:1">怎么拍。<span class="em">念这 7 个数就行。</span></h2>
+  <div class="cam-row rise" style="--i:2">
+    <div class="cam">
+      <div class="cam-bar"><span class="cam-dot"></span></div>
+      <div class="cam-body">
+        <div class="cam-label">REC · 15S</div>
+        <div class="cam-time">15s</div>
+        <div class="count"><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i></div>
+      </div>
+      <div class="cam-foot">对着镜头 · 拍你自己</div>
+    </div>
+    <div class="cam-copy">
+      <h3>现场口令就这一句</h3>
+      <p>手机或相机，镜头对着你。开口念：一、二、三、四、五、六、七。念完停，这段就能用。</p>
+      <ul class="steps">
+        <li class="ok">脸在画面中间</li>
+        <li class="ok">声音能录上</li>
+        <li class="run">拍完先不要删，等下要上传网站</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">不需要准备讲稿。<b>1234567 就是今天的台词。</b></p>
+</section>
+
+<!-- 09 第二件 音频 -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THING 02 · VOICE</div>
+  <h2 class="title rise" style="--i:1">第二件：<span class="em">准备音频，克隆声音。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">音频是干什么的</span></div>
+      <div class="pane-body">
+        <div class="msg b">网站要用这段音频，学会你的声音。</div>
+        <div class="msg t">没有这段，后面输入文字，也克隆不成你的声。</div>
+      </div>
+      <div class="pane-foot">第二件必须准备好</div>
+    </div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">克隆之后</span><span class="live">按你的声</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">文字进去，声音按你的出</div>
+          <ul class="steps">
+            <li class="ok">准备好你们的音频</li>
+            <li class="ok">用来进行克隆声音</li>
+            <li class="run">之后输入文字内容，生成克隆音频</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">声音像你 · 不用你再念一整条</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 网站 -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THE SITE</div>
+  <h2 class="title rise" style="--i:1">我们会把一个网站<span class="em">直接给到你。</span></h2>
+  <p class="sub rise" style="--i:2">不用自己找工具。登录进去，做视频生成和音频生成。</p>
+  <div class="xgrid rise" style="--i:3">
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>网站我们给</h3><p>现场发地址。打开就能进，不用另外去搜平台。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>大家登录进去</h3><p>每个人进自己的账号。助教会协助登录。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>两个生成</h3><p>一段数字人视频的生成，一段克隆音频的生成。</p></div>
+  </div>
+  <div class="eco-strip rise" style="--i:4">
+    <span class="eco-label"><span class="gt">&gt;</span>现场只做这一件事</span>
+    <div class="eco-chips">
+      <span class="eco-chip">登录网站</span>
+      <span class="eco-chip">上传 15 秒</span>
+      <span class="eco-chip">上传音频</span>
+      <span class="eco-chip">输入文字</span>
+      <span class="eco-chip">生成出片</span>
+    </div>
+  </div>
+</section>
+
+<!-- 11 输入文字 -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TYPE THE SCRIPT</div>
+  <h2 class="title rise" style="--i:1">文字输进去，<span class="em">声音按你的克隆。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">你输入</span></div>
+      <div class="pane-body">
+        <div class="msg u">把你们的文字内容输入进去</div>
+        <div class="msg t">今天要它说什么，就写什么。先有字，才有声。</div>
+      </div>
+      <div class="pane-foot">文字是稿 · 音频是你的声</div>
+    </div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">网站生成</span><span class="live">克隆中</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">根据你们的声音，克隆音频</div>
+          <ul class="steps">
+            <li class="ok">已有你的音频样本</li>
+            <li class="ok">已输入文字内容</li>
+            <li class="run">直接生成克隆音频</li>
+          </ul>
+          <div class="dlv"><span class="file">克隆音频</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">字是你写的 · 声是你的</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 出片 -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>MAKE THE VIDEO</div>
+  <h2 class="title rise" style="--i:1">音频有了，<span class="em">数字人视频一起出。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">1</div>
+      <div class="feat-lt">登录一次，<em>两件事一起做</em></div>
+      <p class="feat-ld">网站里完成：克隆音频的生成，数字人视频的生成。拍完上传，就可以直接生成。</p>
+      <span class="cloud-pill"><i class="pdot"></i>每个人一份</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>形象来自 15 秒</h3><p>刚才拍的那段视频，就是数字人的样子。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>声音来自克隆</h3><p>输入文字之后，按你的声音出音频。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>视频在网站里出</h3><p>不另外去剪。生成完成，就是你的数字人视频。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>先看我操作</h3><p>流程就这些。我先在网页里实操一遍，你们再动手。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 没准备 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>IF NOT READY</div>
+  <h2 class="title rise" style="--i:1">现在没准备？<span class="em">现场拍一分钟。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">没带视频</span></div>
+      <div class="pane-body">
+        <div class="msg b">15 秒没拍，音频也没备。</div>
+        <div class="msg t">先别刷手机等着。这一分钟就是用来拍的。</div>
+      </div>
+      <div class="pane-foot">缺素材 · 网站也生成不了</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">现场补拍</span><span class="live">约 1 分钟</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">现在就把数字人视频拍了</div>
+          <ul class="steps">
+            <li class="ok">现场大概花一分钟左右</li>
+            <li class="ok">对着镜头拍自己，念 1234567</li>
+            <li class="run">拍完直接上传到网站</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">拍完就能生成 · 不用带回家再拍</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 助教 -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TA HELP</div>
+  <h2 class="title rise" style="--i:1">让助教老师来帮各位<span class="em">拍一下。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">举手</span><span class="p-name">自己拍不了、设备不熟，先举手</span></div><span class="p-desc">助教过来</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">拍</span><span class="p-name">助教帮你把 15 秒拍完</span></div><span class="p-desc">对着人 · 念 1234567</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">传</span><span class="p-name">拍完直接上传到我们的网站</span></div><span class="p-desc">不要存在相册里不管</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">出</span><span class="p-name">上传完就可以直接生成</span></div><span class="p-desc">视频 + 音频</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:2">助教的任务不是替你做完。<b>是帮你把 15 秒拍下来、传到网站。</b></p>
+</section>
+
+<!-- 15 我先实操 -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>WATCH FIRST</div>
+  <h2 class="quote rise" style="--i:2">我先在这个网页里，<span class="em">实操一遍</span></h2>
+  <p class="quote-2 rise" style="--i:3">登录、上传、输入文字、生成。你们先看清楚流程，再动手。大概就是这样。</p>
+  <button class="cta rise" style="--i:4">看我操作一遍<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">先看</span>
+    <span class="chip">再拍</span>
+    <span class="chip">再上传</span>
+  </div>
+</section>
+
+<!-- 16 收束 -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>YOUR MOVE</div>
+  <h2 class="quote rise" style="--i:2">拍完上传，就能<span class="em">直接生成</span></h2>
+  <p class="quote-2 rise" style="--i:3">15 秒视频、克隆音频、登录网站、输入文字。数字人视频和声音，现场就能出。</p>
+  <button class="cta rise" style="--i:4">现在，把那 15 秒拍下来<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">15 秒视频</span>
+    <span class="chip">克隆声音</span>
+    <span class="chip">网站出片</span>
+    <span class="chip yellow">每个人一份</span>
+  </div>
+</section>
+
+<!-- control bar -->
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">05</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
