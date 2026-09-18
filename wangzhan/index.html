@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · 个人网站 / 品牌官网</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1,#slide-21{text-align:center}
+.cover-logo{
+  width:88px;height:auto;display:block;margin:0 auto 18px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(42px,6.4vw,92px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:14px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.hero-slash{
+  margin-top:18px;display:flex;align-items:baseline;justify-content:center;gap:18px;flex-wrap:wrap;
+}
+.hero-word{
+  font-style:italic;font-weight:900;letter-spacing:.02em;line-height:1;
+  font-size:clamp(36px,6.2vw,84px);color:#f4f7f5;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    10px 14px 28px rgba(0,0,0,.55),
+    0 0 50px rgba(1,200,134,.18);
+}
+.hero-mark{
+  font-style:italic;font-weight:900;
+  font-size:clamp(48px,8vw,110px);line-height:.8;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 28px rgba(1,200,134,.45));
+  transform:translateY(.04em);
+  animation:slashGlow 2.8s ease-in-out infinite;
+}
+@keyframes slashGlow{
+  0%,100%{filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 18px rgba(1,200,134,.28))}
+  50%{filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 36px rgba(1,200,134,.7))}
+}
+.cover-desc{margin-top:18px;color:var(--txt-2);font-size:16px;line-height:1.8;max-width:620px;margin-left:auto;margin-right:auto}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(52px,6.4vw,96px)/0.95 "Inter","Noto Sans SC",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:640px;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:5%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid.four{grid-template-columns:repeat(4,1fr)}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:10px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:17px}
+.say{
+  width:100%;max-width:980px;margin-top:22px;text-align:left;
+  background:linear-gradient(180deg,rgba(1,200,134,.10),rgba(255,255,255,.03));
+  border:1px solid rgba(1,200,134,.38);border-radius:18px;padding:22px 26px 20px;
+  box-shadow:0 18px 50px rgba(1,200,134,.10);
+}
+.say-k{font-size:12px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.say p{font-size:20px;font-weight:700;line-height:1.7}
+.say .mini{margin-top:12px;font-size:13px;color:var(--txt-2);font-weight:500}
+.site-wrap{display:flex;gap:18px;width:100%;max-width:1120px;margin-top:22px;align-items:stretch}
+.site-frame{
+  flex:1.4;border:1px solid rgba(1,200,134,.35);border-radius:18px;overflow:hidden;
+  background:rgba(255,255,255,.03);text-align:left;
+  box-shadow:0 24px 60px rgba(1,200,134,.12);
+}
+.sf-bar{display:flex;align-items:center;gap:7px;padding:11px 14px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.03)}
+.sf-url{margin-left:8px;font-size:12px;color:var(--g2);font-weight:700;letter-spacing:.04em}
+.sf-nav{display:flex;gap:4px;padding:10px 14px;border-bottom:1px solid var(--line)}
+.sf-nav span{
+  font-size:12px;font-weight:700;color:var(--txt-2);padding:6px 12px;border-radius:8px;cursor:default;
+  transition:background .25s,color .25s;
+}
+.sf-nav span:hover,.sf-nav span.on{background:rgba(1,200,134,.14);color:#fff}
+.sf-hero{padding:22px 22px 8px}
+.sf-hero h3{font-size:26px;font-weight:900;margin-bottom:6px}
+.sf-hero p{font-size:13px;color:var(--txt-2);line-height:1.65}
+.sf-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;padding:14px 22px 20px}
+.sf-card{
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:12px;padding:12px;
+  transition:border-color .25s,transform .25s,background .25s;
+}
+.sf-card:hover{border-color:rgba(1,200,134,.55);transform:translateY(-3px);background:rgba(1,200,134,.08)}
+.sf-card b{display:block;font-size:13px;margin-bottom:4px}
+.sf-card span{font-size:11.5px;color:var(--txt-2);line-height:1.5}
+.sf-cta{
+  margin:0 22px 20px;height:38px;border-radius:10px;background:var(--grad);color:#04110b;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:13px;
+  box-shadow:0 8px 22px rgba(1,200,134,.28);
+}
+.site-side{flex:.85;display:flex;flex-direction:column;gap:12px}
+.side-hit{
+  flex:1;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;
+  transition:border-color .3s,transform .3s;
+}
+.side-hit:hover{border-color:rgba(1,200,134,.5);transform:translateY(-2px)}
+.side-hit h3{font-size:15px;font-weight:800;margin-bottom:6px}
+.side-hit p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.clock-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;width:100%;max-width:1120px;margin-top:24px}
+.clock-card{
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 18px 18px;
+  transition:border-color .3s,transform .3s;
+}
+.clock-card:hover{border-color:rgba(1,200,134,.55);transform:translateY(-4px)}
+.clock-mins{
+  font:900 italic 42px/1 "Inter",sans-serif;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.clock-card h3{margin:10px 0 6px;font-size:16px}
+.clock-card p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.bar{height:4px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:14px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--grad);border-radius:99px}
+.warn{border-color:rgba(255,227,85,.22)}
+.warn:hover{border-color:rgba(255,227,85,.5)}
+#slide-9{justify-content:flex-start}
+#slide-9 .title{margin-bottom:10px}
+.shot-stage{
+  width:100%;max-width:1240px;flex:1;min-height:0;
+  display:flex;margin-top:8px;
+}
+.shot-frame{
+  width:100%;border-radius:16px;overflow:hidden;
+  border:1px solid rgba(1,200,134,.38);
+  background:#111314;
+  box-shadow:0 22px 56px rgba(1,200,134,.14);
+}
+.shot-frame img{
+  width:100%;height:100%;display:block;
+  object-fit:contain;object-position:center top;
+  background:#f3f4f3;
+}
+.shot-cap{
+  margin-top:12px;font-size:14px;color:var(--txt-2);text-align:center;font-weight:600;
+}
+.shot-cap b{color:var(--g2);font-weight:800}
+.prompt-board{
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;
+  width:100%;max-width:1180px;margin-top:16px;align-items:stretch;
+}
+.prompt-col{
+  text-align:left;background:var(--panel);border:1px solid var(--line);
+  border-radius:16px;padding:16px 18px 14px;display:flex;flex-direction:column;gap:6px;
+  transition:border-color .3s,transform .3s;
+}
+.prompt-col:hover{border-color:rgba(1,200,134,.55);transform:translateY(-3px)}
+.prompt-col.hot{border-color:rgba(1,200,134,.42);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02))}
+.prompt-hd{display:flex;align-items:baseline;gap:10px;margin-bottom:8px}
+.prompt-n{font:900 italic 28px/1 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.prompt-hd h3{font-size:16px;font-weight:800}
+.pline{
+  font-size:14.5px;line-height:1.55;color:var(--txt);
+  padding:5px 0 5px 14px;position:relative;border-bottom:1px dashed rgba(255,255,255,.06);
+  font-weight:600;
+}
+.pline:last-of-type{border-bottom:none}
+.pline::before{
+  content:">";position:absolute;left:0;top:5px;
+  font-weight:900;font-style:italic;background:var(--grad);
+  -webkit-background-clip:text;background-clip:text;color:transparent;font-size:13px;
+}
+.prompt-tip{margin-top:8px;font-size:12px;color:var(--txt-2);line-height:1.6}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo,.site-wrap{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid,.xgrid.four,.clock-grid,.sf-grid,.prompt-board{grid-template-columns:1fr 1fr}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">个人网站 / 品牌官网</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega rise" style="--i:1">WORKBUDDY<span class="arrow">&gt;</span></h1>
+  <div class="hero-slash rise" style="--i:2">
+    <span class="hero-word">个人网站</span>
+    <span class="hero-mark">/</span>
+    <span class="hero-word">品牌官网</span>
+  </div>
+  <p class="cover-desc rise" style="--i:3">把公司资料、介绍、案例打成一个资料包，做成能发给客户的网页名片。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">今晚实操 30～40 分钟</span>
+    <span class="chip"><span class="gt">&gt;</span>盘点资料</span>
+    <span class="chip"><span class="gt">&gt;</span>grill-me 拷问</span>
+    <span class="chip"><span class="gt">&gt;</span>先计划再出 HTML</span>
+    <span class="chip"><span class="gt">&gt;</span>资料库发布成网址</span>
+  </div>
+</section>
+
+<!-- 02 why -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHY NOW</div>
+  <h2 class="title rise" style="--i:1">每个人都需要一张<span class="em">能发给客户的名片</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">一张网</div>
+      <div class="feat-lt">你带着业务来的。<em>业务要有门面。</em></div>
+      <p class="feat-ld">个人也好，品牌也好。发给客户的时候，层次感是满的，好看的。这是当下就该补上的一块。</p>
+      <span class="cloud-pill"><i class="pdot"></i>不是做着玩 · 是给客户看的</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>个人要</h3><p>咨询、老师、顾问、自由职业。别人加你之前，先看你一眼。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>品牌要</h3><p>公司介绍、服务、案例。一张网比一堆微信消息清楚。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>发出去有档次</h3><p>一个能点开的网址，比 PDF、朋友圈截图高级得多。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>今晚就能有</h3><p>不用找设计师。资料打包，AI 做成网页，再发布出去。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 duo -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>BEFORE / AFTER</div>
+  <h2 class="title rise" style="--i:1">以前发一段话。<span class="em">现在发一个站。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">微信里介绍自己</span></div>
+      <div class="pane-body">
+        <div class="msg u">你好，我们是做××的，有空详聊</div>
+        <div class="msg b">客户回：你们具体做什么？有案例吗？怎么收费？</div>
+        <div class="msg t">然后再发一堆文字、图片、PDF。对方看累了，也就算了。</div>
+      </div>
+      <div class="pane-foot">散 · 乱 · 不像一家正经的</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">一张网</span></div>
+      <div class="pane-body">
+        <div class="msg u">这是我们的介绍页，你先看一眼</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">客户打开就能看懂</div>
+          <ul class="steps">
+            <li class="ok">你是谁，帮谁干什么</li>
+            <li class="ok">案例和证据摆在上面</li>
+            <li class="ok">怎么联系你，按钮就在那儿</li>
+            <li class="run">手机点开也能看</li>
+          </ul>
+          <div class="dlv"><span class="file">介绍.html</span><span class="file">可分享网址</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">一整包资料 · 一个网址 · 发给谁都行</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 what good looks like -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>SUCCESS</div>
+  <h2 class="title rise" style="--i:1">这不是百科全书。<span class="em">是一张数字名片。</span></h2>
+  <p class="sub rise" style="--i:2">客户打开 30 秒，要立刻知道三件事：你是谁、能帮他什么、怎么找你。</p>
+  <div class="xgrid four rise" style="--i:3">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>一句话定位</h3><p>别写公司发展史。先写：你帮谁，解决什么。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>证据</h3><p>案例、前后对比、客户原话。没有图就先写文字案例。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>联系方式</h3><p>微信、电话、预约。没有这一条，网站等于白做。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>手机能看</h3><p>客户多半在微信里点开。电脑好看、手机乱，等于没做。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:4">今晚目标不是十个栏目的大官网。<b>一页讲清楚，能发出去</b>，就算成功。</p>
+</section>
+
+<!-- 05 map -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>COURSE MAP</div>
+  <h2 class="title rise" style="--i:1">今晚四步。<span class="em">一步一步来，别一口吃完。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">盘点</span><span class="p-name">先看手头有哪些资料</span></div><span class="p-desc">介绍 · 案例 · 图 · 你平时怎么讲</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">拷问</span><span class="p-name">不够就让 AI 反复问你</span></div><span class="p-desc">grill-me · 你只管答 · 最后汇总</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">计划→网页</span><span class="p-name">先列计划，再生成 HTML</span></div><span class="p-desc">风格 · 页面 · 信息 写清楚再动手</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">发布</span><span class="p-name">丢进资料库，点分享</span></div><span class="p-desc">右上角分享 · 得到别人能打开的网址</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">操作时间大约 <b>30～40 分钟</b>。卡住了找助教，别自己干耗。</p>
+</section>
+
+<!-- 06 two tracks -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TWO TRACKS</div>
+  <h2 class="title rise" style="--i:1">个人站 / 品牌站。<span class="em">做法一样，内容不同。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">个人网站</span><span class="live">你</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">讲的是「我」</div>
+          <ul class="steps">
+            <li class="ok">我是谁，帮哪类人</li>
+            <li class="ok">擅长什么，做过什么</li>
+            <li class="ok">客户怎么评价我</li>
+            <li class="run">怎么加我微信</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">咨询师 · 老师 · 顾问 · 个人品牌</div>
+    </div>
+    <div class="duo-gt">/</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">品牌官网</span><span class="live">公司</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">讲的是「我们」</div>
+          <ul class="steps">
+            <li class="ok">公司做什么，服务谁</li>
+            <li class="ok">产品 / 项目 / 案例</li>
+            <li class="ok">合作流程怎么走</li>
+            <li class="run">怎么联系业务</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">机构 · 工作室 · 公司业务页</div>
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">选一条先做完。<b>不要两个一起做</b>，今晚先交出一个能发的网址。</p>
+</section>
+
+<!-- 07 step 1 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 01 · 盘点</div>
+  <h2 class="title rise" style="--i:1">第一步：先清楚<span class="em">手头有什么能用</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">先清点</div>
+      <div class="feat-lt">别急着让 AI 做。<em>先看你有什么。</em></div>
+      <p class="feat-ld">品牌介绍、公司资料、案例、图片。还有一件更重要：你平时到底怎么跟客户介绍自己。</p>
+      <span class="cloud-pill"><i class="pdot"></i>没准备齐也没关系，先把有的掏出来</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>书面资料</h3><p>简介、手册、报价单、过往方案。有文件就丢在旁边备用。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>口头介绍</h3><p>你跟客户见面，开口第一句说什么？这句话比官网文案还值钱。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>案例和图片</h3><p>前后对比、现场图、成果截图。没有图，先写「做了什么、结果怎样」。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>联系方式</h3><p>微信、电话、预约方式。今晚就要能点、能加。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 checklist -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>PACK LIST</div>
+  <h2 class="title rise" style="--i:1">资料包最少这 6 样。<span class="em">有就写，没有下一步再挖。</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">必有</span><span class="p-name">名字 / 品牌名</span></div><span class="p-desc">个人真名，或对外用的品牌名</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">必有</span><span class="p-name">一句话：帮谁干什么</span></div><span class="p-desc">别写愿景，写客户听得懂的话</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">必有</span><span class="p-name">服务清单</span></div><span class="p-desc">你到底卖什么，列 3～5 条就够</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">尽量有</span><span class="p-name">1～3 个真实案例</span></div><span class="p-desc">对象、做了什么、结果。禁止编造</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">尽量有</span><span class="p-name">照片 / 作品图</span></div><span class="p-desc">没有就先用文字，后面再补图</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">06</span><div class="p-main"><span class="p-tag">必有</span><span class="p-name">怎么找你</span></div><span class="p-desc">微信、电话、加好友口令</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 09 grill -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 02 · 拷问</div>
+  <h2 class="title rise" style="--i:1">技能库搜 grill。<span class="em">装红框这个 Grill Me。</span></h2>
+  <div class="shot-stage rise" style="--i:2">
+    <div class="shot-frame">
+      <img src="ref/grill-me-skillhub.png" alt="SkillHub 搜索 grill，选 Grill Me">
+    </div>
+  </div>
+  <p class="shot-cap rise" style="--i:3">同名技能很多。<b>就装红框这一张</b> · 装好再调用，让它反复问你</p>
+</section>
+
+<!-- 10 copy this -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>照着念</div>
+  <h2 class="title rise" style="--i:1">开口就这一句。<span class="em">别自己发挥。</span></h2>
+  <div class="say rise" style="--i:2">
+    <div class="say-k"><span class="gt">&gt;</span>复制到 WorkBuddy</div>
+    <p>调用 grill-me。我想做一个个人介绍网站 / 品牌官网。请反复拷问我：我是谁、服务谁、卖什么、有哪些真实案例、风格要怎样、客户看完要做什么。一次问几题，等我答完再往下问。先不要做网站。</p>
+    <div class="mini">个人就说「个人介绍网站」· 公司就说「品牌官网介绍我们公司」· 二选一。</div>
+  </div>
+  <div class="chips rise" style="--i:3">
+    <span class="chip yellow">先不要做网站</span>
+    <span class="chip"><span class="gt">&gt;</span>一次问几题</span>
+    <span class="chip"><span class="gt">&gt;</span>答完再问下一轮</span>
+  </div>
+</section>
+
+<!-- 11 how to answer -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>怎么答</div>
+  <h2 class="title rise" style="--i:1">不知道就说不知道。<span class="em">千万别编。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">会翻车</span></div>
+      <div class="pane-body">
+        <div class="msg u">案例很多，都是行业头部客户……</div>
+        <div class="msg b">AI 当真了，写进网站。客户一点开，对不上号。</div>
+        <div class="msg t">假案例比没案例更伤信任。</div>
+      </div>
+      <div class="pane-foot">编 · 夸 · 一次丢完全部要求</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">这么答</span><span class="live">真实</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">今晚就按这个答</div>
+          <ul class="steps">
+            <li class="ok">不清楚：直接说「不清楚，你给建议」</li>
+            <li class="ok">没图：说「先用文字，图我后补」</li>
+            <li class="ok">没案例：讲一个真实的小结果也行</li>
+            <li class="run">它给的推荐项，选一个就往下走</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">真实、短、能选就选 · 不要写小说</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 summarize then plan -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>问完了</div>
+  <h2 class="title rise" style="--i:1">拷问停手。<span class="em">先汇总，再列计划。</span></h2>
+  <div class="say rise" style="--i:2">
+    <div class="say-k"><span class="gt">&gt;</span>第二句，照着念</div>
+    <p>把刚才所有问答汇总成一份资料。然后列一份做这个网站的完整计划：风格、有哪些板块、每块写什么、主按钮是什么、手机怎么看。先不要写代码，我确认计划后再做。</p>
+    <div class="mini">漏了这一步，网页容易又空又乱。计划你点头了，再让它生成。</div>
+  </div>
+  <div class="eco-strip rise" style="--i:3">
+    <span class="eco-label"><span class="gt">&gt;</span>顺序锁死</span>
+    <div class="eco-chips">
+      <span class="eco-chip">拷问</span>
+      <span class="eco-chip">汇总</span>
+      <span class="eco-chip">计划</span>
+      <span class="eco-chip">你确认</span>
+      <span class="eco-chip">再生成 HTML</span>
+    </div>
+  </div>
+</section>
+
+<!-- 13 what plan includes -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>PLAN</div>
+  <h2 class="title rise" style="--i:1">计划必须写清这 5 件事。<span class="em">没有就打回去。</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">风格</span><span class="p-name">高级、干净、像你的行业</span></div><span class="p-desc">可丢参考图 / 喜欢的网站截图</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">板块</span><span class="p-name">首页一句话 · 服务 · 案例 · 联系</span></div><span class="p-desc">一页就够，别做迷宫</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">信息</span><span class="p-name">只用你确认过的真话</span></div><span class="p-desc">没有的案例不要补戏</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">按钮</span><span class="p-name">客户看完要干什么</span></div><span class="p-desc">加微信 / 预约 / 留电话，只留一个主按钮</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">手机</span><span class="p-name">微信里点开也要能看</span></div><span class="p-desc">字大、按钮大、联系方式别藏</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 14 generate -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 03 · 生成</div>
+  <h2 class="title rise" style="--i:1">计划点头了。<span class="em">按它做出 HTML。</span></h2>
+  <div class="say rise" style="--i:2">
+    <div class="say-k"><span class="gt">&gt;</span>第三句，照着念</div>
+    <p>按刚才确认的计划，生成一个单文件 HTML 网站。本地双击就能打开。风格按计划来。我也可以再给你一张参考图。做完先给我文件路径，我本地打开看一眼。</p>
+    <div class="mini">有喜欢的网站，截图丢给它。没有就说：干净、高级、字大、手机好用。</div>
+  </div>
+  <div class="chips rise" style="--i:3">
+    <span class="chip yellow">单文件 HTML</span>
+    <span class="chip"><span class="gt">&gt;</span>可给参考图</span>
+    <span class="chip"><span class="gt">&gt;</span>先本地打开</span>
+    <span class="chip"><span class="gt">&gt;</span>不对就改，别直接发布</span>
+  </div>
+</section>
+
+<!-- 15 mock site -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LOOKS LIKE</div>
+  <h2 class="title rise" style="--i:1">做好大概长这样。<span class="em">一页讲完。</span></h2>
+  <div class="site-wrap rise" style="--i:2">
+    <div class="site-frame">
+      <div class="sf-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="sf-url">分享后的网址 · 客户一点就开</span></div>
+      <div class="sf-nav"><span class="on">首页</span><span>服务</span><span>案例</span><span>联系</span></div>
+      <div class="sf-hero">
+        <h3>帮××把××做成结果</h3>
+        <p>一句话定位放这里。下面三张卡是服务，最底下是「加微信」。</p>
+      </div>
+      <div class="sf-grid">
+        <div class="sf-card"><b>服务 01</b><span>你具体帮客户干什么</span></div>
+        <div class="sf-card"><b>服务 02</b><span>第二条，短、能看懂</span></div>
+        <div class="sf-card"><b>案例</b><span>真实对象 + 结果</span></div>
+      </div>
+      <div class="sf-cta">加微信 / 预约沟通 &gt;</div>
+    </div>
+    <div class="site-side">
+      <div class="side-hit"><h3>上面是门面</h3><p>第一屏就要把「帮谁干什么」写死。别先放公司历史。</p></div>
+      <div class="side-hit"><h3>中间是证据</h3><p>服务三条 + 一两个案例。客户是来判断找不找你的。</p></div>
+      <div class="side-hit"><h3>下面是行动</h3><p>绿色大按钮。看完不知道怎么找你，这页就废了。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 prompts cheat sheet -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>照着打</div>
+  <h2 class="title rise" style="--i:1">三句提示词。<span class="em">按步骤，一行一行打。</span></h2>
+  <div class="prompt-board rise" style="--i:2">
+    <div class="prompt-col hot">
+      <div class="prompt-hd"><span class="prompt-n">01</span><h3>拷问 · 先不要做网站</h3></div>
+      <div class="pline">调用 Grill Me。</div>
+      <div class="pline">我想做一个个人介绍网站 / 品牌官网。</div>
+      <div class="pline">请反复拷问我：</div>
+      <div class="pline">我是谁、服务谁、卖什么、</div>
+      <div class="pline">有哪些真实案例、风格要怎样、</div>
+      <div class="pline">客户看完要做什么。</div>
+      <div class="pline">一次问几题，等我答完再往下问。</div>
+      <div class="pline">先不要做网站。</div>
+      <p class="prompt-tip">答不上来就打：不清楚，你给建议。</p>
+    </div>
+    <div class="prompt-col">
+      <div class="prompt-hd"><span class="prompt-n">02</span><h3>汇总 · 先列计划</h3></div>
+      <div class="pline">把刚才所有问答汇总成一份资料。</div>
+      <div class="pline">然后列一份做这个网站的完整计划：</div>
+      <div class="pline">风格、有哪些板块、每块写什么、</div>
+      <div class="pline">主按钮是什么、手机怎么看。</div>
+      <div class="pline">先不要写代码，</div>
+      <div class="pline">我确认计划后再做。</div>
+      <p class="prompt-tip">计划你点头了，再打下一句。</p>
+    </div>
+    <div class="prompt-col">
+      <div class="prompt-hd"><span class="prompt-n">03</span><h3>生成 · 出 HTML</h3></div>
+      <div class="pline">按刚才确认的计划，</div>
+      <div class="pline">生成一个单文件 HTML 网站。</div>
+      <div class="pline">本地双击就能打开。</div>
+      <div class="pline">风格按计划来。</div>
+      <div class="pline">我也可以再给你一张参考图。</div>
+      <div class="pline">做完先给我文件路径，</div>
+      <div class="pline">我本地打开看一眼。</div>
+      <p class="prompt-tip">不对就改。先别丢进资料库。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 17 publish -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 04 · 发布</div>
+  <h2 class="title rise" style="--i:1">打开资料库。<span class="em">丢进去，点右上角分享。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">找到文件</span><span class="p-name">本地文件夹里那个 .html</span></div><span class="p-desc">先双击打开，自己看一遍</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">导入</span><span class="p-name">把网站丢进资料库</span></div><span class="p-desc">连同用到的图片一起放</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">分享</span><span class="p-name">点右上角「分享」</span></div><span class="p-desc">发布为一个网站</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">网址</span><span class="p-name">复制链接，发给别人能打开</span></div><span class="p-desc">用手机再点一次，确认没裂</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">这一步不会点，<b>举手找助教</b>。别卡在最后一公里。</p>
+</section>
+
+<!-- 18 how to use url -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>发出去</div>
+  <h2 class="title rise" style="--i:1">网址有了。<span class="em">这才叫名片开始干活。</span></h2>
+  <div class="xgrid four rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>发给客户</h3><p>微信里一句：这是我的介绍，你先看。比发一堆文字干净。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>放进简介</h3><p>视频号、公众号、朋友圈资料里，都能挂这个链接。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>当面打开</h3><p>见面前先发。见面时手机打开，对着讲，不临时翻相册。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>以后还能改</h3><p>案例多了、服务变了，回来改 HTML，再覆盖上传。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">今晚验收就一句：<b>把网址发到自己手机，能打开、能看懂、能找到你。</b></p>
+</section>
+
+<!-- 19 timebox -->
+<section class="slide" id="slide-19">
+  <div class="bg-num">19</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>30–40 MIN</div>
+  <h2 class="title rise" style="--i:1">时间就这么多。<span class="em">按这个拆，别在拷问里泡死。</span></h2>
+  <div class="clock-grid rise" style="--i:2">
+    <div class="clock-card">
+      <div class="clock-mins">05′</div>
+      <h3>盘点</h3>
+      <p>掏出介绍、案例、联系方式。选个人还是品牌。</p>
+      <div class="bar"><i style="width:20%"></i></div>
+    </div>
+    <div class="clock-card">
+      <div class="clock-mins">15′</div>
+      <h3>拷问 + 汇总</h3>
+      <p>grill-me 问，你答。到点就说：请汇总。</p>
+      <div class="bar"><i style="width:40%"></i></div>
+    </div>
+    <div class="clock-card">
+      <div class="clock-mins">10′</div>
+      <h3>计划 → HTML</h3>
+      <p>确认计划，生成网页，本地打开改一版。</p>
+      <div class="bar"><i style="width:28%"></i></div>
+    </div>
+    <div class="clock-card">
+      <div class="clock-mins">10′</div>
+      <h3>发布 + 手机验</h3>
+      <p>进资料库，分享，用手机点开看。</p>
+      <div class="bar"><i style="width:28%"></i></div>
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">拷问超过 15 分钟还在聊风格，<b>强制汇总</b>，先做一版能发的。</p>
+</section>
+
+<!-- 20 pitfalls -->
+<section class="slide" id="slide-20">
+  <div class="bg-num">20</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>别翻车</div>
+  <h2 class="title rise" style="--i:1">这几件事，<span class="em">今晚最容易踩。</span></h2>
+  <div class="xgrid rise" style="--i:2">
+    <div class="fcard warn"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>跳过拷问直接做</h3><p>资料没挖清，网页就是空壳。先问完再生成。</p></div>
+    <div class="fcard warn"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>没有联系按钮</h3><p>好看没用。客户看完不知道加谁，等于没做。</p></div>
+    <div class="fcard warn"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>编案例、夸成绩</h3><p>只写真的。没有大案例，就写一个小结果。</p></div>
+    <div class="fcard warn"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>只在电脑上看</h3><p>必须用手机打开分享链接。字太小、图裂了，当场改。</p></div>
+    <div class="fcard warn"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>个人和品牌一起做</h3><p>今晚交一个。另一个回家再做。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>不会就找助教</h3><p>Skill 不会装、分享找不到、网页打不开，举手。助教团队在。</p></div>
+  </div>
+</section>
+
+<!-- 21 close -->
+<section class="slide" id="slide-21">
+  <div class="bg-num">21</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>发到群里</div>
+  <h2 class="quote rise" style="--i:2">请把你做好的网站<br>直接发在<span class="em">我们的群里</span></h2>
+  <p class="quote-2 rise" style="--i:3">让大家看到你的个人介绍网站，相互借鉴，互相参考。</p>
+  <button class="cta rise" style="--i:4">做好了，网址发群里<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip yellow">直接发群</span>
+    <span class="chip">个人介绍网站</span>
+    <span class="chip">相互借鉴和参考</span>
+  </div>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">20</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>

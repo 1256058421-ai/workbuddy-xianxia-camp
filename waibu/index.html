@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · 收集外部资料</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1{text-align:center}
+.cover-logo{
+  width:104px;height:auto;display:block;margin:0 auto 26px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:680px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+  text-align:center;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:680px;text-align:center;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:5.26%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+.cmd{
+  width:100%;max-width:920px;margin-top:22px;text-align:left;
+  background:rgba(1,200,134,.06);border:1px solid rgba(1,200,134,.28);
+  border-radius:16px;padding:18px 22px;
+}
+.cmd .cmd-k{font-size:11px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:8px}
+.cmd p{font-size:16px;line-height:1.8;color:var(--txt);font-weight:600}
+.cmd .dim{color:var(--txt-2);font-weight:500;font-size:14px;margin-top:8px;line-height:1.7}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid{grid-template-columns:1fr 1fr}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">LESSON_03 / 外部资料</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega rise" style="--i:1">WORKBUDDY<span class="arrow">&gt;</span></h1>
+  <div class="cover-sub rise" style="--i:2">外部资料<span class="em">收集</span></div>
+  <p class="cover-desc rise" style="--i:3">刚才整理的是知识库里的内部资料。这一段去网上查找信息，整理成文件，再存回知识库。短视频明天再教。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">第 3 段</span>
+    <span class="chip"><span class="gt">&gt;</span>四步 + 回存</span>
+    <span class="chip"><span class="gt">&gt;</span>30 分钟实操</span>
+    <span class="chip"><span class="gt">&gt;</span>今天是基础</span>
+  </div>
+</section>
+
+<!-- 02 衔接 -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHERE WE ARE</div>
+  <h2 class="title rise" style="--i:1">刚才是内部。<span class="em">还没到网上去找。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">刚才 · 库里面</span></div>
+      <div class="pane-body">
+        <div class="msg u">把我文件夹里的资料整理成 PPT</div>
+        <div class="msg b">好的，我读了你上传的文件，还有订阅广场里搜到的「财务」「招标」。</div>
+        <div class="msg t">自己的文件、别人做好的库——都还在知识库里，没上网。</div>
+      </div>
+      <div class="pane-foot">内部资料 · 订阅广场 · 换电脑还在</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">现在 · 网上</span><span class="live">收集中</span></div>
+      <div class="pane-body">
+        <div class="msg u">去这个政府官网，搜这一类招标，先列清单</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">外部资料，要你指定源头</div>
+          <ul class="steps">
+            <li class="ok">你给网址、网站</li>
+            <li class="ok">你说清搜哪一类</li>
+            <li class="run">它按这个范围去收集，再列给你</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">官网 · 行业站 · 网站要你来指定</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 获客别急 -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NOT TODAY</div>
+  <h2 class="title rise" style="--i:1">奔着获客来的，<span class="em">先别急。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">½</div>
+      <div class="feat-lt">大概一半同学，<em>是来学获客的</em></div>
+      <p class="feat-ld">获客多半要做自媒体。自媒体先要有资料。这些资料不在知识库里，在网上。今天先学会怎么去网上收集。</p>
+      <span class="cloud-pill"><i class="pdot"></i>短视频明天教 · 今天先打基础</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>获客要有资料</h3><p>没有外面的信息，内容就只剩自己那一套，很难打动人。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>先资料，后输出</h3><p>PPT、公众号、视频、宝妈内容，都是同一套：先收集，再输出成你要的形式。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>今天打基础</h3><p>先把 AI 用来找资料、整理资料学会。短视频明天再教。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>一步一步来</h3><p>整段规划要分步执行。每一步都仔细、妥当，后面才走得顺。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 三种资料 -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THREE SOURCES</div>
+  <h2 class="title rise" style="--i:1">资料就三种。<span class="em">分开来用，不要混在一句里。</span></h2>
+  <p class="sub rise" style="--i:2">内部是你自己的资料。订阅是别人整理好的库。外部是网上正在发生的信息。</p>
+  <div class="path rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">内部</span><span class="p-name">你自己准备的文件</span></div><span class="p-desc">制度、方案、自己做过的东西</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">订阅</span><span class="p-name">广场里别人的库</span></div><span class="p-desc">还在 IMA 里，搜行业就能看到</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">外部</span><span class="p-name">网上的真实网站</span></div><span class="p-desc">官网、招标网、行业站、评论区</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:4">这一段只练第 3 种。<b>知识库里没有的，才需要去网上收集。</b></p>
+</section>
+
+<!-- 05 网上收集什么 -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT TO PICK</div>
+  <h2 class="title rise" style="--i:1">去网上收集，<span class="em">先想清楚要什么。</span></h2>
+  <div class="xgrid rise" style="--i:1">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>选题</h3><p>别人最近在讲什么、搜什么。选题清楚了，后面才好做内容。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>同行</h3><p>对方主页、视频号。看他们怎么讲，用来对照，不是照搬。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>政策口径</h3><p>政府网、官方文件。讲课、获客，口径要对，不能讲错。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>用户原话</h3><p>评论区、问答里的原句。比自己想出来的更真实。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>行业数字</h3><p>公开报告、协会数据。有数字，内容才站得住。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>招标 / 采购</h3><p>对接企业客户的，政府官网里就有。要说清是哪一类。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:2">PPT、公众号、短视频、宝妈内容，<b>收集的内容可以不同，步骤是一样的。</b></p>
+</section>
+
+<!-- 06 源头比问题重要 -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>SOURCE FIRST</div>
+  <h2 class="title rise" style="--i:1">不给网址，<span class="em">搜出来很难用。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">说得太宽</span></div>
+      <div class="pane-body">
+        <div class="msg u">帮我搜一下获客</div>
+        <div class="msg u">帮我搜招标信息</div>
+        <div class="msg b">这是我找到的 10 个链接……</div>
+        <div class="msg t">网站是它自己挑的，链接不一定对得上，日期也可能是旧的。</div>
+      </div>
+      <div class="pane-foot">范围没说清 · 结果不好核对</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">先定网站</span><span class="live">能用</span></div>
+      <div class="pane-body">
+        <div class="msg u">去××政府官网，只搜今年、××市、信息化类招标</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">范围清楚了，才能搜得准</div>
+          <ul class="steps">
+            <li class="ok">你指定网站</li>
+            <li class="ok">你指定哪一类</li>
+            <li class="run">它按这个范围列清单</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">源头是你定的 · 对得上就能用</div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 全景 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THE 5 MOVES</div>
+  <h2 class="title rise" style="--i:1">整段就五步。<span class="em">前四步去网上找，第五步存回知识库。</span></h2>
+  <p class="sub rise" style="--i:2">每一步都要清楚。不要一句「帮我找资料」带过，要分步做。</p>
+  <div class="path tight rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">源头</span><span class="p-name">确认行业，给出网址</span></div><span class="p-desc">先定去哪找</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">搜什么</span><span class="p-name">说清要哪一类内容</span></div><span class="p-desc">招标就要写哪一类标</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">清单</span><span class="p-name">先列出来，再决定用不用</span></div><span class="p-desc">标题 · 来源 · 日期 · 链接</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">文件</span><span class="p-name">按清单输出你要的格式</span></div><span class="p-desc">Word · HTML · PDF · PPT</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">回存</span><span class="p-name">全部存回 IMA，新建文件夹</span></div><span class="p-desc">不存回去，换电脑就没了</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 08 第1步 -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 01 · SOURCE</div>
+  <h2 class="title rise" style="--i:1">第 1 步：<span class="em">先确认去哪找。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">1</div>
+      <div class="feat-lt">先定行业，<em>再定网站</em></div>
+      <p class="feat-ld">你要给它源头：网址、网站名。没有源头，它不知道该去哪找，找回来也不好核对。</p>
+      <span class="cloud-pill"><i class="pdot"></i>源头是你选的，不是它选的</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>政府官网</h3><p>招标、政策、通知。公开、能核对。对接企业客户的，优先看这里。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>行业协会 / 官网</h3><p>行业报告、标准、公开数据。比随便一篇文章更靠得住。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>同行主页</h3><p>对方官网、视频号主页。看他们怎么讲，用来对照。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>评论和问答</h3><p>真实用户原话。选题、需求从这里来，不是自己想出来的。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 源头怎么写 -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WRITE THE SOURCE</div>
+  <h2 class="title rise" style="--i:1">源头要写成三列。<span class="em">网站、网址、用来找什么。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">网站</span><span class="p-name">××省政府采购网</span></div><span class="p-desc">找招标公告</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">网址</span><span class="p-name">把链接原样贴进去</span></div><span class="p-desc">不要让它自己猜域名</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">用途</span><span class="p-name">只找信息化、今年、本市</span></div><span class="p-desc">这个站只找指定内容</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <div class="cmd rise" style="--i:2">
+    <div class="cmd-k">&gt; 可以这样开口</div>
+    <p>我的行业是【财务 / 教育 / 你的行业】。请只从我给出的这些网站收集资料，不要自己另找网站。网站清单如下：1. 名称 + 网址 + 这个站用来找什么。</p>
+    <div class="dim">一次给 2～4 个网站就够。给太多，反而搜不准。</div>
+  </div>
+</section>
+
+<!-- 10 第2步 -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 02 · QUERY</div>
+  <h2 class="title rise" style="--i:1">第 2 步：<span class="em">说清搜哪一类。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">说得太宽</span></div>
+      <div class="pane-body">
+        <div class="msg u">帮我搜招标</div>
+        <div class="msg u">帮我找获客素材</div>
+        <div class="msg b">好的，招标有很多种……获客素材也很多……</div>
+        <div class="msg t">政府官网里招标很多。你不说哪一类，找回来也不好用。</div>
+      </div>
+      <div class="pane-foot">类别没说清 · 结果会很散</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">够清楚</span><span class="live">能搜</span></div>
+      <div class="pane-body">
+        <div class="msg u">只搜 2026 年、本市、信息化 / 软件类招标，只要公开公告</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">一类，比「所有招标」有用</div>
+          <ul class="steps">
+            <li class="ok">时间：今年 / 近 90 天</li>
+            <li class="ok">地点：哪座城市、哪个区</li>
+            <li class="ok">类别：信息化、培训、设备……</li>
+            <li class="run">只要公开信息，需要登录才能看的先不要</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">同学的需求也是这样：先听清要哪一类，再去官网上看</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 边界 -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>BOUNDARIES</div>
+  <h2 class="title rise" style="--i:1">搜索要划四条线。<span class="em">范围清楚，找回来才能用。</span></h2>
+  <div class="xgrid rise" style="--i:1">
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>看日期</h3><p>网上的信息会过期。政策、招标、热点，都要写「只要最近××」。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>看公开</h3><p>只要不用登录就能看的。需要付费、需要登录的，先不要收集。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>看出处</h3><p>每条都要带来源链接。没有链接的，先不要写进正文。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>看版权</h3><p>公开信息可以整理成你的文件。原文不要整篇拿去发布。</p></div>
+  </div>
+  <div class="cmd rise" style="--i:2">
+    <div class="cmd-k">&gt; 边界可以跟在指令后面</div>
+    <p>只收集公开可访问的内容；每条必须带来源链接和发布日期；过期或没有链接的标出来，不要写进正文。</p>
+  </div>
+</section>
+
+<!-- 12 第3步 清单 -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 03 · LIST</div>
+  <h2 class="title rise" style="--i:1">第 3 步：<span class="em">先列清单，不要直接出文件。</span></h2>
+  <p class="sub rise" style="--i:2">清单是给你核对用的。对得上，再变成 Word、PPT、视频稿。</p>
+  <div class="path tight rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">标题</span><span class="p-name">这条信息叫什么</span></div><span class="p-desc">一眼能看懂</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">来源</span><span class="p-name">哪个网站，哪条链接</span></div><span class="p-desc">能点开核对</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">日期</span><span class="p-name">什么时候发的</span></div><span class="p-desc">旧的先放一边</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">要不要</span><span class="p-name">留用 / 不用 / 待确认</span></div><span class="p-desc">用不用，你来定</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:4">清单列完，你才有一份<b>能参考、能往下写</b>的底稿。</p>
+</section>
+
+<!-- 13 第4步 出文件 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 04 · OUTPUT</div>
+  <h2 class="title rise" style="--i:1">第 4 步：<span class="em">按清单，输出你要的文件。</span></h2>
+  <div class="feat rise" style="--i:1">
+    <div class="feat-left">
+      <div class="big4">4</div>
+      <div class="feat-lt">格式可以换，<em>步骤不能跳</em></div>
+      <p class="feat-ld">Word、HTML、PDF、PPT，公众号文章、视频脚本，都一样：有清单才能写。没有清单，写出来对不上来源。</p>
+      <span class="cloud-pill"><i class="pdot"></i>先说格式，再说篇幅和给谁看</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>行业报告</h3><p>给自己看、给客户看。把清单收成一份能翻的文件。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>PPT / 网页</h3><p>要讲课、要投影，就出 HTML 或 PPT。就像我们现在这套课件。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>公众号 / 视频稿</h3><p>获客用的。素材从清单来，观点你来定。短视频明天再教。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>表格也行</h3><p>招标清单、同行对照，用表格往往比长文更清楚。</p></div>
+    </div>
+  </div>
+  <div class="eco-strip rise" style="--i:2">
+    <span class="eco-label"><span class="gt">&gt;</span>你开口指定格式就行</span>
+    <div class="eco-chips">
+      <span class="eco-chip">Word</span>
+      <span class="eco-chip">HTML</span>
+      <span class="eco-chip">PDF</span>
+      <span class="eco-chip">PPT</span>
+      <span class="eco-chip">Excel</span>
+      <span class="eco-chip">公众号</span>
+      <span class="eco-chip">视频脚本</span>
+    </div>
+  </div>
+</section>
+
+<!-- 14 招标走一遍 -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WALKTHROUGH</div>
+  <h2 class="title rise" style="--i:1">拿招标走一遍。<span class="em">你照着换自己的行业。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">源头</span><span class="p-name">打开政府官网，把网址给它</span></div><span class="p-desc">听到同学需求后去看过</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">搜什么</span><span class="p-name">哪一类招标、哪个地方、哪段时间</span></div><span class="p-desc">官网里招标很多，要说清</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">清单</span><span class="p-name">标题、链接、日期、要不要用</span></div><span class="p-desc">供你参考的底</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">文件</span><span class="p-name">按清单出 Word / HTML / PDF</span></div><span class="p-desc">你要什么格式就说什么</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">回存</span><span class="p-name">把文件夹存回 IMA</span></div><span class="p-desc">下一页专门讲</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <div class="cmd rise" style="--i:2">
+    <div class="cmd-k">&gt; 四步可以一次说完，但必须按顺序</div>
+    <p>请按这个顺序做，不要跳步：1）只使用我给的网址；2）只搜我指定的类别；3）先输出清单让我确认；4）确认后再生成【Word / HTML】。</p>
+  </div>
+</section>
+
+<!-- 15 还没进库 -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NOT IN THE LIBRARY YET</div>
+  <h2 class="title rise" style="--i:1">文件有了，<span class="em">不等于进了知识库。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">只停在这台电脑</span></div>
+      <div class="pane-body">
+        <div class="msg u">清单和报告都做好了</div>
+        <div class="msg b">文件在本地，桌面上能看见。</div>
+        <div class="msg t">换一台电脑？没有。明天再问知识库？它也不知道你刚收集回来的东西。</div>
+      </div>
+      <div class="pane-foot">本地文件 · 库里还是旧的</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">要存回知识库</span><span class="live">关键一步</span></div>
+      <div class="pane-body">
+        <div class="msg u">全部存回 IMA，新建一个文件夹</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">为什么搭知识库？因为它能不断累积</div>
+          <ul class="steps">
+            <li class="ok">收集回来的，先变成文件</li>
+            <li class="run">文件再放进知识库</li>
+            <li>下次提问，就能问到这次的结果</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">云端累积 · 换电脑还在 · 越用越厚</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 回存 IMA -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>SAVE BACK TO IMA</div>
+  <h2 class="title rise" style="--i:1">操作就这一句。<span class="em">新建文件夹，全放进去。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">命名</span><span class="p-name">【行业】-外部资料-月日</span></div><span class="p-desc">例：财务-外部资料-0917</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">放什么</span><span class="p-name">清单、报告、PPT、原始摘录，全放</span></div><span class="p-desc">不要只存成品</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">确认</span><span class="p-name">打开 IMA，能看见这个新文件夹</span></div><span class="p-desc">进文件夹问一句试一下</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <div class="cmd rise" style="--i:2">
+    <div class="cmd-k">&gt; 直接复制去对话框</div>
+    <p>把刚才收集回来的所有资料文件，全部帮我存回艾玛知识库。新建一个文件夹，名字叫：【我的行业】-外部资料-今天日期。这些文件都放进这个文件夹。</p>
+    <div class="dim">存完进这个文件夹问一句：「这个文件夹里有哪些文件，各是干什么的？」能答上来，才算真正存进去了。</div>
+  </div>
+</section>
+
+<!-- 17 无限进化 -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHY THE LIBRARY</div>
+  <h2 class="title rise" style="--i:1">知识库是积出来的。<span class="em">不是一次建完的。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">+</div>
+      <div class="feat-lt">每一次收集回来，<em>都要存回知识库</em></div>
+      <p class="feat-ld">只用内部资料，容易只剩自己那一套。只用外部资料，又少了你自己的内容。两样放进同一个库里，才会越用越有用。</p>
+      <span class="cloud-pill"><i class="pdot"></i>每一次收集回来，都往库里加一层</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>今天这一层</h3><p>网上收集的招标、选题、口径，进了「外部资料」文件夹。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>明天还能加</h3><p>短视频素材、评论原话、新的政策，继续往同一个库里放。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>提问范围变大</h3><p>以后问「我们行业最近有什么」，它能答到你亲自收集回来的东西。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>换电脑还在</h3><p>资料在云端：人换地方，库还跟着你。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 实操 30 分钟 -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LAB · 30 MIN</div>
+  <h2 class="title rise" style="--i:1">现在动手。<span class="em">30 分钟，走完五步。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">你的任务</span><span class="live">30:00</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">按顺序做，做完打勾</div>
+          <ul class="steps">
+            <li class="run">写下你的行业，找出 2～3 个真实网址</li>
+            <li>告诉它只从这些网站搜，并写清搜哪一类</li>
+            <li>先要一份清单，自己点开 2 条核对</li>
+            <li>按清单输出一份 Word 或 HTML</li>
+            <li>全部存回 IMA，文件夹名：行业-外部资料-今天</li>
+          </ul>
+          <div class="dlv">
+            <span class="file">源头清单</span>
+            <span class="file">资料清单</span>
+            <span class="file">成品文件</span>
+            <span class="file">IMA 新文件夹</span>
+          </div>
+        </div>
+      </div>
+      <div class="pane-foot wb">做不完也没关系 · 五步都碰到一次就算过</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">卡住就看这里</span></div>
+      <div class="pane-body">
+        <div class="msg t">找不到官网？先用政府网、协会网、自己熟悉的一个同行主页。</div>
+        <div class="msg t">它自己另找网站了？把指令再贴一遍：只使用我给的网址。</div>
+        <div class="msg t">清单打不开？那条先标「不用」，不要写进正文。</div>
+        <div class="msg t">获客的同学：今天出一份选题或同行清单就行，先不用做视频。</div>
+      </div>
+      <div class="pane-foot">有问题举手 · 先完成回存这一步</div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 收束 -->
+<section class="slide" id="slide-19">
+  <div class="bg-num">19</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>YOUR MOVE</div>
+  <h2 class="quote rise" style="--i:2">收集回来的，<br>要<span class="em">存进知识库</span></h2>
+  <p class="quote-2 rise" style="--i:3">今天先把资料收集走通。短视频明天再教。库会越积越厚，这才是搭知识库的原因。</p>
+  <button class="cta rise" style="--i:4">源头 · 搜什么 · 清单 · 文件 · 回存<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">先给网址</span>
+    <span class="chip">先清单，再成文件</span>
+    <span class="chip">不存回去，换电脑就没了</span>
+  </div>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">19</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>

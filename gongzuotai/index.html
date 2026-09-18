@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · 专题④ 工作台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --bad:#E25B4A;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1{text-align:center}
+.cover-logo{
+  width:104px;height:auto;display:block;margin:0 auto 26px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:680px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;text-align:center;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:620px;text-align:center;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:3.4%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid.g4{grid-template-columns:repeat(4,1fr)}
+.xgrid.g5{grid-template-columns:repeat(5,1fr)}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+
+/* --- this lesson extras --- */
+.scatter{
+  position:relative;width:100%;max-width:1080px;height:430px;margin-top:8px;
+}
+.folder{
+  position:absolute;width:168px;padding:18px 14px 16px;
+  background:linear-gradient(180deg,#1c2421,#141917);
+  border:1px solid var(--line);border-radius:0 12px 12px 12px;
+  box-shadow:12px 18px 30px rgba(0,0,0,.35);
+}
+.folder::before{
+  content:"";position:absolute;left:-1px;top:-14px;width:58px;height:16px;
+  background:#1c2421;border:1px solid var(--line);border-bottom:none;
+  border-radius:8px 10px 0 0;
+}
+.folder .tab{font-size:11px;font-weight:800;letter-spacing:.12em;color:var(--txt-3);margin-bottom:8px}
+.folder .name{font-size:16px;font-weight:800}
+.folder .n{font-size:12px;color:var(--txt-3);margin-top:6px}
+.folder.f1{left:2%;top:18%;transform:rotate(-18deg)}
+.folder.f2{left:34%;top:2%;transform:rotate(11deg)}
+.folder.f3{left:66%;top:22%;transform:rotate(-7deg)}
+.folder.f4{left:14%;top:58%;transform:rotate(21deg)}
+.folder.f5{left:58%;top:62%;transform:rotate(-16deg)}
+.folder.messy{border-color:rgba(226,91,74,.28)}
+
+.vs-row{
+  display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap;
+  margin-top:8px;
+}
+.vs-word{
+  font-style:italic;font-weight:900;font-size:clamp(64px,12vw,160px);line-height:1;
+  color:#f4f7f5;
+  text-shadow:
+    1px 1px 0 #0cb37f, 3px 3px 0 #0ba16f, 6px 6px 0 #098659,
+    9px 9px 0 #076b44, 12px 12px 0 #055031,
+    18px 22px 36px rgba(0,0,0,.55);
+}
+.vs-mid{
+  font-size:clamp(52px,8vw,110px);font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 24px rgba(1,200,134,.45));
+}
+
+.q-huge{
+  font-size:clamp(28px,4.2vw,48px);font-weight:900;text-align:center;line-height:1.4;max-width:920px;
+}
+
+.stairs{display:flex;align-items:flex-end;gap:16px;width:100%;max-width:1080px;margin-top:20px;height:300px}
+.step{
+  flex:1;display:flex;flex-direction:column;justify-content:flex-end;
+  border:1px solid var(--line);border-radius:16px 16px 8px 8px;
+  padding:22px 20px;background:var(--panel);position:relative;overflow:hidden;
+}
+.step .pct{font:900 italic 42px/1 "Inter",sans-serif;margin-bottom:8px}
+.step b{font-size:20px;font-weight:900;display:block;margin-bottom:6px}
+.step p{font-size:13px;color:var(--txt-2);line-height:1.55}
+.step.s1{height:46%;opacity:.55;filter:saturate(.4)}
+.step.s1 .pct{color:var(--bad)}
+.step.s2{height:68%;opacity:.7;filter:saturate(.55)}
+.step.s3{height:100%;border-color:rgba(1,200,134,.5);background:linear-gradient(180deg,rgba(1,200,134,.14),rgba(255,255,255,.02));box-shadow:0 20px 50px rgba(1,200,134,.12)}
+.step.s3 .pct{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.pct-huge{
+  font:900 italic clamp(120px,22vw,280px)/.85 "Inter",sans-serif;
+  color:var(--bad);
+  text-shadow:0 0 60px rgba(226,91,74,.25);
+}
+.lv1-line{margin-top:8px;font-size:clamp(22px,3vw,36px);font-weight:900;color:#f3d4d0;text-align:center}
+
+.feel{
+  font-style:italic;font-weight:900;letter-spacing:-.04em;line-height:.9;
+  font-size:clamp(88px,18vw,220px);color:#f4f7f5;text-align:center;
+  text-shadow:
+    1px 1px 0 #0cb37f, 3px 3px 0 #0ba16f, 6px 6px 0 #098659,
+    10px 10px 0 #076b44, 14px 14px 0 #055031,
+    22px 28px 44px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.feel-story{margin-top:22px;font-size:18px;color:var(--txt-2);text-align:center;line-height:1.8;max-width:720px}
+.feel-story b{color:#fff}
+
+.sop-flow{display:flex;align-items:center;gap:10px;margin-top:22px;flex-wrap:wrap;justify-content:center}
+.sop-n{
+  width:64px;height:64px;border-radius:16px;display:flex;align-items:center;justify-content:center;
+  font:900 italic 26px/1 "Inter",sans-serif;color:#04110b;background:var(--grad);
+  box-shadow:0 10px 24px rgba(1,200,134,.28);
+}
+.sop-arr{font-size:28px;font-weight:900;font-style:italic;color:var(--g2)}
+.scale-row{display:flex;gap:14px;margin-top:26px;width:100%;max-width:900px}
+.scale{
+  flex:1;text-align:center;border:1px solid var(--line);border-radius:16px;padding:18px 10px;background:var(--panel);
+}
+.scale b{display:block;font-size:28px;font-weight:900;margin-bottom:4px}
+.scale span{font-size:13px;color:var(--txt-2)}
+.scale.on{border-color:rgba(1,200,134,.5);background:rgba(1,200,134,.08)}
+.scale.on b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+.engine-stage{position:relative;width:360px;height:220px;margin:10px auto 0}
+.eng-block{
+  position:absolute;left:70px;top:48px;width:220px;height:92px;
+  background:linear-gradient(180deg,#2a3330,#151a18);
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  box-shadow:0 18px 0 #0b0d0c, 0 28px 40px rgba(0,0,0,.45);
+}
+.eng-cyl{position:absolute;top:-28px;width:42px;height:38px;border-radius:8px 8px 4px 4px;background:linear-gradient(180deg,#3a4440,#1b211f);border:1px solid rgba(255,255,255,.12)}
+.eng-cyl.c1{left:22px}
+.eng-cyl.c2{left:88px}
+.eng-cyl.c3{left:154px}
+.eng-belt{position:absolute;right:-34px;top:18px;width:54px;height:54px;border-radius:50%;border:8px solid #2c3633;box-shadow:inset 0 0 0 8px #141918}
+.eng-floor{position:absolute;left:20px;right:20px;bottom:8px;height:10px;border-radius:99px;background:rgba(255,255,255,.06);box-shadow:0 10px 24px rgba(0,0,0,.4)}
+.eng-cap{margin-top:18px;font-size:20px;font-weight:800;text-align:center}
+
+.car-stage{position:relative;width:340px;height:168px;margin:4px auto 12px}
+.car-body{
+  position:absolute;left:18px;bottom:28px;width:300px;height:70px;
+  background:linear-gradient(180deg,#1d2824,#101614);
+  border:1.5px solid rgba(1,200,134,.45);border-radius:18px 40px 12px 12px;
+}
+.car-cabin{
+  position:absolute;left:92px;bottom:86px;width:130px;height:46px;
+  background:rgba(1,200,134,.12);border:1.5px solid rgba(1,200,134,.4);
+  border-radius:18px 28px 0 0;
+}
+.car-eng{
+  position:absolute;left:28px;bottom:42px;width:54px;height:36px;
+  background:#2a3330;border:1px solid rgba(255,255,255,.16);border-radius:6px;
+}
+.car-dash{
+  position:absolute;left:160px;bottom:46px;width:70px;height:10px;border-radius:99px;background:var(--grad);opacity:.85;
+}
+.wheel{position:absolute;bottom:10px;width:36px;height:36px;border-radius:50%;border:6px solid #cfd6d2;background:#0c0e0d}
+.wheel.w1{left:48px}
+.wheel.w2{right:48px}
+.poster{width:100%;max-width:560px;display:flex;flex-direction:column;gap:12px}
+.poster-line{
+  display:flex;align-items:center;gap:12px;
+  font-size:clamp(22px,3.1vw,34px);font-weight:900;
+  padding:14px 18px;border-radius:14px;
+  background:var(--panel);border:1px solid var(--line);
+}
+.poster-line .gt{font-size:28px}
+
+.layers{width:100%;max-width:860px;display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.layer{
+  display:flex;align-items:center;gap:20px;
+  padding:18px 22px;border-radius:16px;border:1px solid var(--line);background:var(--panel);
+}
+.layer .ln{font:900 italic 32px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.2px rgba(1,200,134,.5);min-width:52px}
+.layer h3{font-size:22px;font-weight:900}
+.layer p{font-size:14px;color:var(--txt-2);margin-top:4px}
+.layer.dim{opacity:.55}
+.layer.hot{
+  border-color:rgba(1,200,134,.55);
+  background:linear-gradient(180deg,rgba(1,200,134,.14),rgba(255,255,255,.03));
+  box-shadow:0 16px 40px rgba(1,200,134,.12);
+  transform:scale(1.03);
+}
+.layer.hot .ln{-webkit-text-stroke:0;color:var(--g2);text-shadow:0 0 18px rgba(1,200,134,.5)}
+
+.search-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;border-radius:12px;
+  border:1px solid rgba(1,200,134,.35);
+  background:rgba(1,200,134,.08);
+  font-size:15px;font-weight:700;color:var(--txt);
+}
+.search-bar .gt{font-size:18px}
+.search-bar .ph{color:var(--txt-3);font-weight:600}
+.dash-mock{
+  width:100%;max-width:720px;margin-top:10px;
+  border:1px solid rgba(1,200,134,.35);border-radius:18px;
+  background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));
+  overflow:hidden;text-align:left;
+}
+.dash-mock .dh{
+  padding:12px 16px;border-bottom:1px solid var(--line);
+  font-size:12px;font-weight:800;letter-spacing:.14em;color:var(--g2);
+}
+.dash-nums{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px}
+.dash-nums b{display:block;font:900 italic 28px/1 "Inter",sans-serif;color:#fff}
+.dash-nums span{font-size:12px;color:var(--txt-2)}
+.dash-bars{padding:0 16px 16px;display:flex;flex-direction:column;gap:8px}
+.dash-bars i{display:block;height:8px;border-radius:99px;background:var(--grad)}
+.dash-bars i:nth-child(1){width:82%}
+.dash-bars i:nth-child(2){width:54%;opacity:.7}
+.dash-bars i:nth-child(3){width:36%;opacity:.45}
+.kb-pane{width:100%;max-width:680px;margin-top:12px}
+.prompt-wrap{
+  width:100%;max-width:1120px;margin-top:8px;
+  display:grid;grid-template-columns:1.08fr .92fr;gap:16px;align-items:stretch;
+}
+.prompt-box{
+  width:100%;max-width:none;margin-top:0;text-align:left;
+  background:rgba(1,200,134,.06);border:1px solid rgba(1,200,134,.28);
+  border-radius:16px;padding:14px 18px 16px;
+}
+.prompt-k{font-size:11px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:8px}
+.prompt-box p{font-size:13px;line-height:1.62;color:var(--txt);margin-top:7px}
+.prompt-box p:first-of-type{margin-top:0}
+.prompt-box .dim{color:var(--txt-2);font-size:12.5px}
+.prompt-box .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+.why-col{display:flex;flex-direction:column;gap:7px}
+.why-row{
+  display:flex;align-items:flex-start;gap:10px;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:12px;padding:8px 12px 9px;
+}
+.why-n{
+  min-width:22px;padding-top:1px;
+  font:900 italic 16px/1 "Inter",sans-serif;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.why-row b{display:block;font-size:13px;font-weight:800;margin-bottom:2px}
+.why-row span{display:block;font-size:12px;color:var(--txt-2);line-height:1.5}
+.hit{margin-top:6px;font-size:12px;color:var(--g2);font-weight:700}
+.xgrid.g4 .fcard{min-height:168px}
+.qmark{
+  font:900 italic clamp(140px,24vw,280px)/.8 "Inter",sans-serif;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(8px 8px 0 rgba(4,80,54,.45));
+}
+.feat .hit{margin-top:2px}
+.shop-wrap{
+  width:100%;max-width:1120px;margin-top:8px;
+  display:grid;grid-template-columns:1.12fr .88fr;gap:16px;align-items:stretch;
+}
+.shop-wrap .dash-mock{max-width:none;margin-top:0}
+.dash-nums.n4{grid-template-columns:repeat(4,1fr)}
+.dash-nums.n4 b{font-size:24px}
+.prompt-box.dense p{font-size:12px;line-height:1.55;margin-top:6px}
+.why-col.tight{gap:6px}
+.why-col.tight .why-row{padding:6px 10px}
+.why-col.tight .why-row b{font-size:12.5px}
+.why-col.tight .why-row span{font-size:11.5px}
+.plant-win{
+  width:100%;max-width:1080px;margin-top:8px;height:min(430px,52vh);
+  border-radius:16px;overflow:hidden;text-align:left;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 24px 60px rgba(0,0,0,.42);
+  background:#e8eef5;color:#1a2a3a;
+  display:flex;flex-direction:column;
+}
+.plant-bar{
+  background:#1e3a5f;color:#fff;
+  display:flex;align-items:center;gap:10px;
+  padding:8px 14px;font-size:12px;font-weight:700;letter-spacing:.04em;
+}
+.plant-dots{display:flex;gap:6px}
+.plant-dots i{width:8px;height:8px;border-radius:50%;background:#7eb6e8;display:block}
+.plant-bar .url{
+  flex:1;background:rgba(255,255,255,.1);border-radius:8px;
+  padding:5px 12px;font-size:11px;font-weight:600;color:#cfe3f6;letter-spacing:.02em;
+}
+.plant-body{display:grid;grid-template-columns:168px 1fr;flex:1;min-height:0}
+.plant-side{background:#16324f;padding:12px 10px;display:flex;flex-direction:column;gap:6px}
+.plant-nav{padding:9px 12px;border-radius:8px;font-size:13px;font-weight:700;color:#c5d8ea}
+.plant-nav.on{background:#2b6cb0;color:#fff}
+.plant-main{padding:12px 14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.plant-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.plant-kpi{background:#fff;border-radius:10px;padding:10px 12px;border:1px solid #d5e0ea}
+.plant-kpi b{display:block;font:900 italic 22px/1 "Inter",sans-serif;color:#1e4b8c}
+.plant-kpi span{font-size:11px;color:#5a6e80}
+.plant-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:8px;flex:1;min-height:0}
+.plant-card{background:#fff;border-radius:10px;padding:10px 12px;border:1px solid #d5e0ea;overflow:hidden}
+.plant-card h4{font-size:11px;font-weight:800;letter-spacing:.12em;color:#1e4b8c;margin-bottom:8px}
+.dept{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #eef2f6;font-size:12px;font-weight:700}
+.dept:last-child{border-bottom:none}
+.dept span{color:#5a6e80;font-weight:600;font-size:11px}
+.rpt{font-size:12px;color:#33485c;line-height:1.55}
+.rpt b{color:#1e4b8c}
+
+.blank{background:#050605}
+.blank::after{
+  content:"";position:absolute;inset:0;background:#050605;z-index:0;
+}
+.blank-hint{font-size:14px;letter-spacing:.32em;color:rgba(238,242,240,.16);font-weight:700}
+
+.phone{
+  width:250px;height:500px;border-radius:36px;padding:12px;
+  background:#121614;border:3px solid #2a3330;
+  box-shadow:0 30px 60px rgba(0,0,0,.45), 0 0 0 8px #0c0f0d;
+}
+.phone .notch{width:90px;height:8px;border-radius:99px;background:#1c2421;margin:6px auto 12px}
+.phone .screen{
+  height:calc(100% - 30px);border-radius:24px;padding:14px;
+  background:linear-gradient(180deg,#0e1613,#0a0c0b);
+  border:1px solid rgba(1,200,134,.25);
+  display:flex;flex-direction:column;gap:10px;
+}
+.phone .ph-h{font-size:13px;font-weight:800;color:var(--g2)}
+.phone .ph-g{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1}
+.phone .ph-g i{
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-style:normal;font-size:12px;font-weight:700;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:12px;background:rgba(1,200,134,.06);
+}
+
+.flow{display:flex;align-items:center;gap:10px;width:100%;max-width:1080px;margin-top:18px;flex-wrap:wrap;justify-content:center}
+.flow-box{
+  flex:1;min-width:140px;text-align:center;
+  border:1px solid var(--line);border-radius:16px;padding:18px 12px;background:var(--panel);
+}
+.flow-box b{display:block;font-size:18px;font-weight:900;margin-bottom:6px}
+.flow-box span{font-size:13px;color:var(--txt-2)}
+.flow-gt{font-size:28px;font-weight:900;font-style:italic;color:var(--g2)}
+
+.diff{display:inline-flex;align-items:center;gap:8px;margin-left:8px;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:800;color:#04110b;background:var(--grad)}
+
+.ans3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:18px}
+.ans3 .fcard h3{font-size:18px}
+.ans3 .fcard p{font-size:13.5px;line-height:1.7}
+.ans3 .mini{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.ans3 .mini span{font-size:12.5px;color:var(--txt-2);padding:6px 10px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--line)}
+
+.kill-list{width:min(780px,100%);display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.kill-row{
+  position:relative;font-size:clamp(20px,2.8vw,32px);font-weight:800;
+  padding:10px 18px;border-radius:12px;
+}
+.kill-row.dead{color:var(--txt-3)}
+.kill-row.dead .slash{
+  position:absolute;left:16px;right:16px;top:50%;height:3px;border-radius:99px;
+  background:var(--bad);transform:scaleX(0);transform-origin:left;pointer-events:none;
+}
+.slide.active .kill-row.dead .slash{
+  animation:slash .38s cubic-bezier(.22,1,.36,1) forwards;
+  animation-delay:calc(var(--i)*170ms + 280ms);
+}
+@keyframes slash{to{transform:scaleX(1)}}
+.kill-row.keep{
+  color:#fff;background:rgba(1,200,134,.10);
+  border:1px solid rgba(1,200,134,.45);
+}
+
+.do-wrap{display:grid;grid-template-columns:1.15fr .95fr;gap:16px;width:100%;max-width:1120px;margin-top:8px;align-items:stretch}
+.chk-box{display:flex;flex-direction:column;gap:10px;text-align:left}
+.chk{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);
+  font-size:16px;font-weight:700;cursor:pointer;
+}
+.chk input{width:18px;height:18px;accent-color:#01C886}
+.side-stack{display:flex;flex-direction:column;gap:12px}
+.side-stack .fcard{flex:1}
+.hang{
+  margin-top:12px;font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--g2);
+}
+.say{
+  margin-top:18px;font-size:16px;color:var(--txt-2);text-align:center;max-width:740px;line-height:1.75;
+}
+.say b{color:#fff;font-weight:800}
+.q-huge .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feel-zero{
+  font:900 italic 28px/1 "Inter",sans-serif;color:var(--bad);letter-spacing:.08em;margin-bottom:8px;
+}
+.home-col{display:flex;flex-direction:column;align-items:center;gap:14px;width:100%;max-width:1100px;margin-top:10px}
+.home-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;width:100%}
+.folder.dock{
+  position:static;transform:none;width:150px;
+  border-color:rgba(1,200,134,.35);
+  border-radius:12px;
+}
+.folder.dock::before{display:none}
+.home-arrows{
+  font-size:28px;font-weight:900;font-style:italic;color:var(--g2);letter-spacing:18px;
+}
+.home-hub{
+  min-width:220px;height:110px;border-radius:18px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  background:linear-gradient(180deg,rgba(1,200,134,.16),rgba(255,255,255,.03));
+  border:1px solid rgba(1,200,134,.5);
+  box-shadow:0 16px 40px rgba(1,200,134,.16);
+  font-size:28px;font-weight:900;
+}
+.home-hub span{font-size:12px;color:var(--txt-2);font-weight:700;letter-spacing:.12em}
+.kill-row.itch{
+  color:var(--txt);background:var(--panel);border:1px solid var(--line);
+}
+
+.fx{
+  width:100%;max-width:1180px;margin-top:2px;
+  display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;
+}
+.fx-col{
+  text-align:left;
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:18px;padding:14px 20px 16px;
+}
+.fx-col.hot{
+  border-color:rgba(1,200,134,.5);
+  background:linear-gradient(180deg,rgba(1,200,134,.12),rgba(255,255,255,.03));
+}
+.fx-h{
+  font-size:clamp(24px,2.6vw,34px);font-weight:900;margin-bottom:6px;
+}
+.tpl-k{font-size:11px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:6px}
+.tpl-open{font-size:clamp(16px,1.75vw,21px);font-weight:800;line-height:1.45;margin-bottom:8px}
+.tpl-step{
+  padding:7px 0;border-top:1px solid var(--line);
+  font-size:clamp(15px,1.6vw,19px);line-height:1.5;font-weight:600;color:var(--txt);
+}
+.tpl-step b{
+  font-weight:900;margin-right:6px;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.tpl-end{
+  margin-top:8px;padding-top:8px;border-top:1px solid rgba(1,200,134,.28);
+  font-size:clamp(14px,1.45vw,17px);font-weight:700;color:var(--txt-2);line-height:1.55;
+}
+.slot{
+  color:var(--g2);font-weight:900;white-space:nowrap;
+  border-bottom:2px solid rgba(14,200,169,.75);padding:0 3px;
+}
+.fx-bar{
+  width:100%;max-width:1180px;margin-top:12px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;
+  font-size:clamp(16px,1.8vw,22px);font-weight:800;
+  padding:12px 18px;border-radius:14px;
+  background:rgba(1,200,134,.08);border:1px solid rgba(1,200,134,.32);
+}
+.fx-bar .gt{font-size:1.15em}
+.title.sm{font-size:clamp(26px,3.2vw,36px);margin-bottom:8px}
+.chk.lg{font-size:18px;padding:14px 16px}
+
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid,.xgrid.g4,.xgrid.g5,.ans3,.do-wrap,.prompt-wrap,.shop-wrap,.plant-grid,.plant-body,.fx{grid-template-columns:1fr 1fr}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+  .stairs{height:auto;flex-direction:column;align-items:stretch}
+  .step.s1,.step.s2,.step.s3{height:auto}
+  .scatter{height:520px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">专题④ / 工作台</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 封面 -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega rise" style="--i:1">工作台<span class="arrow">&gt;</span></h1>
+  <div class="cover-sub rise" style="--i:2">重复的工作，<span class="em">归一个台子</span></div>
+  <div class="chips rise" style="--i:3">
+    <span class="chip"><span class="gt">&gt;</span>我看</span>
+    <span class="chip"><span class="gt">&gt;</span>团队看</span>
+    <span class="chip"><span class="gt">&gt;</span>客户看</span>
+    <span class="chip yellow">能卖</span>
+  </div>
+</section>
+
+<!-- 02 散落文件夹 -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>现场问 · 这些只有你找得到</div>
+  <h2 class="title rise" style="--i:1">你现在有几个<span class="em">文件夹</span>？</h2>
+  <div class="scatter rise" style="--i:2">
+    <div class="folder messy f1"><div class="tab">FOLDER</div><div class="name">客户微信</div><div class="n">截图还在聊天里</div></div>
+    <div class="folder messy f2"><div class="tab">FOLDER</div><div class="name">短视频素材</div><div class="n">找不到上周那条</div></div>
+    <div class="folder messy f3"><div class="tab">FOLDER</div><div class="name">合同合同</div><div class="n">重名了三份</div></div>
+    <div class="folder messy f4"><div class="tab">FOLDER</div><div class="name">新建文件夹</div><div class="n">以后再整理</div></div>
+    <div class="folder messy f5"><div class="tab">FOLDER</div><div class="name">表格备份</div><div class="n">最终最终版.xlsx</div></div>
+  </div>
+</section>
+
+<!-- 03 过渡 -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>先别急着整理文件夹</div>
+  <h2 class="title rise" style="--i:1">先问一个更前面的问题</h2>
+  <p class="q-huge rise" style="--i:2">你的业务，<span class="em">AI 能不能介入？</span></p>
+</section>
+
+<!-- 05 三个等级地图 -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>能介入到哪 · 就三档</div>
+  <h2 class="title rise" style="--i:1">业务 AI 化，就<span class="em">三档</span></h2>
+  <div class="stairs rise" style="--i:2">
+    <div class="step s1"><div class="pct">0%</div><b>01 没跑通</b><p>一条都没做成过</p></div>
+    <div class="step s2"><div class="pct">0%</div><b>02 凭感觉</b><p>跑通了，说不清</p></div>
+    <div class="step s3"><div class="pct">100%</div><b>03 有 SOP</b><p>步骤能复用，才轮到 AI</p></div>
+  </div>
+  <p class="say rise" style="--i:3">现场问一句：你现在在哪一档。</p>
+</section>
+
+<!-- 06 等级一 红色 -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>这一档 · AI 插不进</div>
+  <div class="pct-huge rise" style="--i:1">0%</div>
+  <h2 class="title rise" style="--i:2">业务<span class="em">没跑通</span></h2>
+  <p class="lv1-line rise" style="--i:3">一条都没做成过，AI 帮不了你</p>
+</section>
+
+<!-- 07 凭感觉 -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>这一档 · 跑通了，也教不会</div>
+  <div class="feel-zero rise" style="--i:1">0%</div>
+  <p class="feel-story rise" style="--i:2">爆款出得很稳。你问他公式。他说——</p>
+  <div class="feel rise" style="--i:3">凭感觉</div>
+</section>
+
+<!-- 08 金句 分身 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>凭感觉给不了它</div>
+  <h2 class="quote rise" style="--i:1">AI = 你的<span class="em">分身</span></h2>
+  <p class="quote-2 rise" style="--i:2">你不懂的，它也不懂。<br>你懂的，它才懂。</p>
+</section>
+
+<!-- 09 等级三 SOP 绿 -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>所以要把感觉写成步骤</div>
+  <h2 class="title rise" style="--i:1">有 SOP，才是<span class="em">100%</span></h2>
+  <div class="sop-flow rise" style="--i:2">
+    <div class="sop-n">1</div><div class="sop-arr">&gt;</div>
+    <div class="sop-n">2</div><div class="sop-arr">&gt;</div>
+    <div class="sop-n">3</div><div class="sop-arr">&gt;</div>
+    <div class="sop-n">4</div><div class="sop-arr">&gt;</div>
+    <div class="sop-n">5</div>
+  </div>
+  <div class="scale-row rise" style="--i:3">
+    <div class="scale"><b>一条</b><span>短视频 skill</span></div>
+    <div class="scale"><b>一百条</b><span>同一套步骤</span></div>
+    <div class="scale on"><b>一千条</b><span>人不用再从头想</span></div>
+  </div>
+  <p class="say rise" style="--i:4">步骤有了，它长什么样？</p>
+</section>
+
+<!-- 网页本质 · 紧接 SOP -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>不是软件 · 不用下载</div>
+  <h2 class="quote rise" style="--i:1">它的本质是一个<span class="em">网页</span></h2>
+  <p class="quote-2 rise" style="--i:2">就是一个网址<br>谁都能打开</p>
+  <p class="say rise" style="--i:3">所以才能给团队，才能给客户。</p>
+</section>
+
+<!-- 10 工作台定义 -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>先把这句话说死</div>
+  <h2 class="quote rise" style="--i:1">把日常工作放进去<br>就叫<span class="em">工作台</span></h2>
+</section>
+
+<!-- 11 四块 -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>一张台子 · 四块</div>
+  <h2 class="title rise" style="--i:1">必然有的，就<span class="em">这四块</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">第一页</span><span class="p-name">仪表盘</span></div><span class="p-desc">数据、面板、大盘，打开就能看见</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">第二块</span><span class="p-name">知识库</span></div><span class="p-desc">资料存进去，关键词能搜</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">最要紧</span><span class="p-name">日常工作</span></div><span class="p-desc">干活的板块，放你每天重复的事</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">获客</span><span class="p-name">热点聚合</span></div><span class="p-desc">外面的热点，拿来做内容</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 12 仪表盘 -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第一块</div>
+  <h2 class="title rise" style="--i:1">仪表盘 · <span class="em">打开第一页就能看见</span></h2>
+  <div class="dash-mock rise" style="--i:2">
+    <div class="dh">工作台 · 第一页</div>
+    <div class="dash-nums">
+      <div><b>128</b><span>本周单量</span></div>
+      <div><b>36</b><span>待跟进</span></div>
+      <div><b>91%</b><span>完成率</span></div>
+    </div>
+    <div class="dash-bars"><i></i><i></i><i></i></div>
+  </div>
+  <p class="say rise" style="--i:3">数据、面板、大盘，全搁这一页。不用再问做到哪了。</p>
+</section>
+
+<!-- 13 知识库 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第二块</div>
+  <h2 class="title rise" style="--i:1">知识库 · <span class="em">存进去，搜得着</span></h2>
+  <div class="pane wb kb-pane rise" style="--i:2">
+    <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">知识库</span></div>
+    <div class="pane-body">
+      <div class="search-bar"><span class="gt">&gt;</span> 搜索<span class="ph">　输关键词就能找</span></div>
+      <div class="dlv">
+        <span class="file">教师 · 课件讲义</span>
+        <span class="file">咨询 · 问答口径</span>
+        <span class="file">财务 · 报表模板</span>
+        <span class="file">升学 · 1901 所高校</span>
+      </div>
+    </div>
+    <div class="pane-foot wb">比如升学台：1901 所最新院校信息丢进去，搜校名就能调出来</div>
+  </div>
+</section>
+
+<!-- 14 日常工作 -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第三块 · 最要紧</div>
+  <h2 class="title rise" style="--i:1">把日常工作<span class="em">放进去</span></h2>
+  <div class="path tight rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">老师</span><span class="p-name">AI PPT 板块</span></div><span class="p-desc">调前面知识库，直接出课件</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">写文案</span><span class="p-name">文书板块</span></div><span class="p-desc">按知识库写，不用从头编</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">升学</span><span class="p-name">规划板块</span></div><span class="p-desc">填客户信息，按院校库自动匹配</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">自媒体</span><span class="p-name">内容板块</span></div><span class="p-desc">同行内容进库，再出你的文案</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 15 热点聚合 -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>要获客的人 · 再加一块</div>
+  <h2 class="title rise" style="--i:1">热点聚合 · <span class="em">外部知识库</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">内部知识库</span></div>
+      <div class="pane-body">
+        <div class="msg b">课件、口径、报表、院校信息</div>
+        <div class="msg t">你自己的资料。给自己用。</div>
+      </div>
+      <div class="pane-foot">第二块 · 已经讲过</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">热点聚合</span><span class="live">外面的</span></div>
+      <div class="pane-body">
+        <div class="msg u">今天外面在热什么</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">拿来做内容</div>
+          <ul class="steps">
+            <li class="ok">热点先进来</li>
+            <li class="run">再写成你能发的东西</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">不是内部资料，是外面的料</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 无非就是装进去 -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>别想复杂</div>
+  <h2 class="title rise" style="--i:1">无非就是把刚学的，<span class="em">装进台子</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">内部</span><span class="p-name">内部资料</span></div><span class="p-desc">进知识库</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">外部</span><span class="p-name">外部资料</span></div><span class="p-desc">进热点聚合</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">给人看</span><span class="p-name">个人介绍网站</span></div><span class="p-desc">进客户打开的那一层</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">给人问</span><span class="p-name">数字分身</span></div><span class="p-desc">也搁在台子上</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="say rise" style="--i:3">慢慢全变成你的工作台。没有新花样。</p>
+</section>
+
+<!-- 谁打开 -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>台子有了 · 谁来打开</div>
+  <h2 class="title rise" style="--i:1">不按功能分，按<span class="em">谁打开</span>分</h2>
+  <div class="layers rise" style="--i:2">
+    <div class="layer hot"><div class="ln">01</div><div><h3>我看</h3><p>自己用。按钮、面板、资料，都为自己服务。</p></div></div>
+    <div class="layer dim"><div class="ln">02</div><div><h3>团队看</h3><p>同事要进来填、要进来看。</p></div></div>
+    <div class="layer dim"><div class="ln">03</div><div><h3>客户看</h3><p>打开的人，不是内部的人。</p></div></div>
+  </div>
+</section>
+
+<!-- 第一层地图 -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>演示前先认这四块</div>
+  <h2 class="title rise" style="--i:1">第一层 · <span class="em">我的工作台</span></h2>
+  <div class="xgrid g4 rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>干活按钮</h3><p>skill 点一下就跑。不用翻文件夹。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>数据面板</h3><p>数字摊开。不用再问「做到哪了」。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>资料库</h3><p>常用的东西搁台上。找得到。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>今天的活</h3><p>打开就能接着干。不用从头想。</p></div>
+  </div>
+</section>
+
+<!-- 19 心理咨询台 -->
+<section class="slide" id="slide-19">
+  <div class="bg-num">19</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>真台子① · 心理咨询</div>
+  <h2 class="title rise" style="--i:1">心理咨询工作台 · <span class="em">四块怎么用</span></h2>
+  <div class="xgrid g4 rise" style="--i:2">
+    <div class="fcard">
+      <div class="fviz"><span class="vz-clock"><i></i></span></div>
+      <h3>仪表盘</h3>
+      <p>打开第一页，这张台子里的数据全在面板上。咨询量、待跟进，一眼能看见。</p>
+      <div class="hit">&gt; 交互：打开就看，不用翻文件夹</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+      <h3>知识库</h3>
+      <p>已经有一版，但还不细。每个部分都可以继续往下补、写详细。这一步交给 AI 做。</p>
+      <div class="hit">&gt; 交互：搜关键词；让 AI 把每一块写厚</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-signal"><i></i></span></div>
+      <h3>热点聚合</h3>
+      <p>就一句话：把所有关于心理学的热点，给我聚合在这个板块。就能实时看见。</p>
+      <div class="hit">&gt; 交互：打开这一页，热点已经在</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+      <h3>AI PPT</h3>
+      <p>知识库、热点做成两个选项，接入大模型，生成课件 PPT。</p>
+      <div class="hit">&gt; 交互：勾选资料来源 → 出 PPT</div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 心理咨询提示词 -->
+<section class="slide" id="slide-20">
+  <div class="bg-num">20</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>心理咨询 · 提示词 · 一句一句拆</div>
+  <h2 class="title rise" style="--i:1">先写清四块，<span class="em">再让它规划</span></h2>
+  <div class="prompt-wrap rise" style="--i:2">
+    <div class="prompt-box">
+      <div class="prompt-k">COPY · 照着念</div>
+      <p>帮我做一个心理咨询个人工作台，最后用 HTML 呈现。</p>
+      <p>四个板块：<b>1. 仪表盘</b>，打开第一页就能看见这张台子里的所有数据，用面板展示。<b>2. 知识库</b>，我已经有一版，还不完善。每个部分都要能继续拓展、写得更细，这一步交给 AI 做。<b>3. 热点聚合</b>，你把所有关于心理学的热点给我聚合在这个板块，我要能实时看到。<b>4. 日常工作</b>，知识库和热点做成两个选项，接入 AI 大模型，生成 AI PPT。</p>
+      <p class="dim">先给我写一份完整规划。规划出来之后，再按规划搭建。色调：安静、浅色、让人看着放心，不要花。最后用 HTML 给我。</p>
+    </div>
+    <div class="why-col">
+      <div class="why-row"><span class="why-n">01</span><div><b>开口钉死</b><span>做什么：心理咨询个人工作台。交什么：HTML 网页。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>仪表盘</b><span>打开第一页，面板上能看见这张台子的全部数据。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>知识库</b><span>已经有一版，还不细。每个部分继续往下补，这一步交给 AI。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>热点 · 就一句话</b><span>把所有关于心理学的热点，给我聚合在这个板块。</span></div></div>
+      <div class="why-row"><span class="why-n">05</span><div><b>第四块出 PPT</b><span>知识库、热点做成两个选项，接入大模型，生成 AI PPT。</span></div></div>
+      <div class="why-row"><span class="why-n">06</span><div><b>先规划再搭</b><span>先写完整规划，再按规划搭建。色调安静浅色。最后 HTML。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 AI工作台 -->
+<section class="slide" id="slide-21">
+  <div class="bg-num">21</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>真台子② · AI</div>
+  <h2 class="title rise" style="--i:1">AI 工作台 · <span class="em">四块怎么用</span></h2>
+  <div class="xgrid g4 rise" style="--i:2">
+    <div class="fcard">
+      <div class="fviz"><span class="vz-clock"><i></i></span></div>
+      <h3>仪表盘</h3>
+      <p>打开第一页，整张台子的数据摊开。看什么、做到哪，都清楚。</p>
+      <div class="hit">&gt; 交互：打开就看盘</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+      <h3>知识库</h3>
+      <p>放 AI Agent 相关的知识。以后写东西、做判断，都从这里调。</p>
+      <div class="hit">&gt; 交互：搜、调、继续往里补</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-signal"><i></i></span></div>
+      <h3>热点聚合</h3>
+      <p>外部热点实时更新。大概每 10 分钟一轮，能看到最前沿的 AI 讯息。</p>
+      <div class="hit">&gt; 交互：打开就能刷到新的</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+      <h3>公众号创作</h3>
+      <p>接入知识库，接入热点聚合，用来写公众号。</p>
+      <div class="hit">&gt; 交互：选库 + 选热点 → 出一篇</div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 AI提示词 -->
+<section class="slide" id="slide-22">
+  <div class="bg-num">22</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>AI 工作台 · 提示词 · 一句一句拆</div>
+  <h2 class="title rise" style="--i:1">同样四块，<span class="em">换一批料</span></h2>
+  <div class="prompt-wrap rise" style="--i:2">
+    <div class="prompt-box">
+      <div class="prompt-k">COPY · 照着念</div>
+      <p>帮我做一个 AI 个人工作台，最后用 HTML 呈现。</p>
+      <p>四个板块：<b>1. 仪表盘</b>，打开就能看清整张台子的数据。<b>2. 知识库</b>，放 AI Agent 相关的知识。<b>3. 热点聚合</b>，外部热点实时更新，大概每 10 分钟更新一轮，能看到最前沿的 AI 讯息。<b>4. 创作</b>，接入知识库，接入热点聚合，用来写公众号。</p>
+      <p class="dim">先给我写一份完整规划。规划出来之后，再按规划搭建。色调：深色、清楚、像看盘，字要大。最后用 HTML 给我。</p>
+    </div>
+    <div class="why-col">
+      <div class="why-row"><span class="why-n">01</span><div><b>开口钉死</b><span>做什么：AI 个人工作台。交什么：HTML 网页。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>仪表盘</b><span>打开第一页，整张台子的数据摊开，看什么都清楚。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>知识库</b><span>放 AI Agent 相关的知识。写东西、做判断，从这里调。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>热点 · 写清频率</b><span>外部热点实时更新。大概每 10 分钟一轮，看最前沿。</span></div></div>
+      <div class="why-row"><span class="why-n">05</span><div><b>第四块写公众号</b><span>接入知识库，接入热点聚合，用来写公众号。</span></div></div>
+      <div class="why-row"><span class="why-n">06</span><div><b>先规划再搭</b><span>先写完整规划，再按规划搭建。色调深色像看盘。最后 HTML。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 特殊教育台 -->
+<section class="slide" id="slide-23">
+  <div class="bg-num">23</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>真台子③ · 特殊教育</div>
+  <h2 class="title rise" style="--i:1">特殊教育工作台 · <span class="em">还是这四块</span></h2>
+  <div class="xgrid g4 rise" style="--i:2">
+    <div class="fcard">
+      <div class="fviz"><span class="vz-clock"><i></i></span></div>
+      <h3>仪表盘</h3>
+      <p>打开第一页，数据用面板摊开。课、个案、待办，一眼能看见。</p>
+      <div class="hit">&gt; 交互：打开就看</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+      <h3>知识库</h3>
+      <p>特殊教育相关资料存进去，能搜，也能继续往细里补。</p>
+      <div class="hit">&gt; 交互：搜关键词；让 AI 往细里写</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-signal"><i></i></span></div>
+      <h3>热点聚合</h3>
+      <p>把特殊教育相关的外部热点聚合进来，能实时看。</p>
+      <div class="hit">&gt; 交互：打开这一页，热点已经在</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+      <h3>公众号</h3>
+      <p>接入知识库和热点，生成公众号。</p>
+      <div class="hit">&gt; 交互：选库 + 选热点 → 出一篇</div>
+    </div>
+  </div>
+</section>
+
+<!-- 24 特殊教育提示词 -->
+<section class="slide" id="slide-24">
+  <div class="bg-num">24</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>特殊教育 · 提示词 · 一句一句拆</div>
+  <h2 class="title rise" style="--i:1">结构不变，<span class="em">换你的行业</span></h2>
+  <div class="prompt-wrap rise" style="--i:2">
+    <div class="prompt-box">
+      <div class="prompt-k">COPY · 照着念</div>
+      <p>帮我做一个特殊教育个人工作台，最后用 HTML 呈现。</p>
+      <p>四个板块：<b>1. 仪表盘</b>，打开第一页就能看见所有数据，用面板展示。<b>2. 知识库</b>，特殊教育相关资料，存进去能搜，也能继续往细里补。<b>3. 热点聚合</b>，把特殊教育相关的外部热点聚合在这个板块，能实时看。<b>4. 创作</b>，接入知识库和热点，生成公众号。</p>
+      <p class="dim">先给我写一份完整规划。规划出来之后，再按规划搭建。色调：干净、好读，家长打开也能看懂。最后用 HTML 给我。</p>
+    </div>
+    <div class="why-col">
+      <div class="why-row"><span class="why-n">01</span><div><b>开口钉死</b><span>做什么：特殊教育个人工作台。交什么：HTML 网页。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>仪表盘</b><span>打开第一页就能看见所有数据，用面板展示。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>知识库</b><span>特教资料存进去。能搜，也能继续往细里补。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>热点</b><span>把特殊教育相关的外部热点，聚合在这个板块，能实时看。</span></div></div>
+      <div class="why-row"><span class="why-n">05</span><div><b>第四块写公众号</b><span>接入知识库和热点，生成公众号。</span></div></div>
+      <div class="why-row"><span class="why-n">06</span><div><b>先规划再搭</b><span>先写完整规划，再按规划搭建。色调干净好读。最后 HTML。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 手机 -->
+<section class="slide" id="slide-25">
+  <div class="bg-num">25</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>掏手机 · 打开刚才那个台子</div>
+  <div class="phone rise" style="--i:1">
+    <div class="notch"></div>
+    <div class="screen">
+      <div class="ph-h">我的工作台</div>
+      <div class="ph-g"><i>干活按钮</i><i>数据面板</i><i>资料库</i><i>今天的活</i></div>
+    </div>
+  </div>
+</section>
+
+<!-- 团队旧世界 -->
+<section class="slide" id="slide-26">
+  <div class="bg-num">26</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>网页能转发了 · 先给团队</div>
+  <h2 class="title rise" style="--i:1">团队台 · 先看<span class="em">现在怎么干</span></h2>
+  <div class="flow rise" style="--i:2">
+    <div class="flow-box"><b>五个人</b><span>各干各的</span></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-box"><b>微信群报数</b><span>一条条往上刷</span></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-box"><b>本子</b><span>有人负责抄</span></div>
+    <div class="flow-gt">&gt;</div>
+    <div class="flow-box"><b>两小时</b><span>才汇总完</span></div>
+  </div>
+</section>
+
+<!-- 27 团队台四块 -->
+<section class="slide" id="slide-27">
+  <div class="bg-num">27</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第二层 · 团队台 · 还是这四块</div>
+  <h2 class="title rise" style="--i:1">结构没变，知识库变成<span class="em">各部门</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">02</div>
+      <div class="feat-lt">点进去，就是这个部门</div>
+      <p class="feat-ld">数据、信息、职能，全在里面。也可以理解成团队分工。数据一多，就能汇报。下面两个真台子。</p>
+      <div class="cloud-pill"><i class="pdot"></i>家居电商 · 零件工厂</div>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard">
+        <div class="fviz"><span class="vz-clock"><i></i></span></div>
+        <h3>仪表盘</h3>
+        <p>整张团队台的数据摊开。谁看、看到哪，都清楚。</p>
+        <div class="hit">&gt; 交互：打开就看盘</div>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+        <h3>团队知识库</h3>
+        <p>各部门一点击进去：数据、信息、职能。这就是分工。</p>
+        <div class="hit">&gt; 交互：点部门 · 进去看</div>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-signal"><i></i></span></div>
+        <h3>外部热点</h3>
+        <p>外面的情报聚合进来。团队共用这一页。</p>
+        <div class="hit">&gt; 交互：打开就能刷</div>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+        <h3>工作内容</h3>
+        <p>接入大模型，调用上面几块：库、热点、盘上的数，直接干活。</p>
+        <div class="hit">&gt; 交互：选板块 → 出结果</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 家居电商介绍 -->
+<section class="slide" id="slide-28">
+  <div class="bg-num">28</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>团队案例① · 家居电商</div>
+  <h2 class="title rise" style="--i:1">家居电商工作台 · <span class="em">四块怎么用</span></h2>
+  <div class="shop-wrap rise" style="--i:2">
+    <div class="dash-mock">
+      <div class="dh">天猫 · 京东 · 今日盘</div>
+      <div class="dash-nums n4">
+        <div><b>128.6万</b><span>GMV</span></div>
+        <div><b>842</b><span>订单</span></div>
+        <div><b>1528</b><span>客单价</span></div>
+        <div><b>2.1%</b><span>退款</span></div>
+      </div>
+      <div class="dash-bars"><i></i><i></i><i></i></div>
+    </div>
+    <div class="why-col">
+      <div class="why-row"><span class="why-n">01</span><div><b>仪表盘</b><span>GMV、订单、销售趋势。数据导进去，就能生成这张盘。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>知识库</b><span>两条路都行：自己导入资料，或者做成每个部门的职能分工。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>热点聚合</b><span>家居电商的情报，加上同行每日销售。这一块交给 AI 去抓。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>AI 汇报</b><span>接入 DeepSeek。按经营数据、部门事项，直接生成今日汇报。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 29 家居电商提示词 -->
+<section class="slide" id="slide-29">
+  <div class="bg-num">29</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>家居电商 · 提示词 · 一句一句拆</div>
+  <h2 class="title rise" style="--i:1">先规划，搭完再<span class="em">迭代两三轮</span></h2>
+  <div class="prompt-wrap rise" style="--i:2">
+    <div class="prompt-box dense">
+      <div class="prompt-k">COPY · 照着念</div>
+      <p>帮我做一个家居电商工作台，最后用 HTML 呈现。</p>
+      <p><b>1. 仪表盘</b>：之前经营的是天猫和京东，是一个传统电商，希望做一个数据汇总。<b>2. 知识库</b>：模拟出一个家居电商的所有内部资料，因为我没有各位的资料。<b>3. 热点聚合</b>：把所有关于家具同行的信息、情报进行实时更新，每隔 15 分钟更新一遍。<b>4. AI 汇报</b>：做一个专门的汇报文案、内容、工作等，接入 AI 大模型，输入 API Key 就可以了。</p>
+      <p class="dim">先不用去跑。先给我做好一份完整规划。第二步：规划做好之后，根据整个规划进行工作台搭建。要选择木质的色调，最后用 HTML 呈现。注意：整个网站已经搭建出来的情况下，再迭代两三轮再给到我。</p>
+    </div>
+    <div class="why-col tight">
+      <div class="why-row"><span class="why-n">01</span><div><b>开口钉死</b><span>家居电商工作台。交 HTML 网页。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>仪表盘</b><span>天猫、京东，传统电商，要一张数据汇总盘。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>知识库</b><span>没有真资料，就让它模拟一家家居电商的内部资料。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>热点 · 15 分钟</b><span>家具同行的信息、情报，每隔 15 分钟更新一遍。</span></div></div>
+      <div class="why-row"><span class="why-n">05</span><div><b>AI 汇报</b><span>汇报文案、内容、工作。接入大模型，填 API Key 就能用。</span></div></div>
+      <div class="why-row"><span class="why-n">06</span><div><b>先规划 · 木质 · 再迭代</b><span>先写规划再搭。木质色调。HTML。搭出来后再自动迭代两三轮。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 30 零件工厂介绍 -->
+<section class="slide" id="slide-30">
+  <div class="bg-num">30</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>团队案例② · 零件工厂</div>
+  <h2 class="title rise" style="--i:1">零件生产工厂 · <span class="em">还是这四块</span></h2>
+  <div class="xgrid g4 rise" style="--i:2">
+    <div class="fcard">
+      <div class="fviz"><span class="vz-clock"><i></i></span></div>
+      <h3>数据驾驶舱</h3>
+      <p>每日情况摊开。产量、合格、在制，打开第一页就能看见。</p>
+      <div class="hit">&gt; 交互：打开就看今日</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+      <h3>知识库</h3>
+      <p>内部资料，每个部门的职能。点进去就是这个部门。</p>
+      <div class="hit">&gt; 交互：点部门 · 进去看</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-signal"><i></i></span></div>
+      <h3>热点聚合</h3>
+      <p>外面的零件信息、友商新闻，聚在这一页。</p>
+      <div class="hit">&gt; 交互：打开就能刷到新的</div>
+    </div>
+    <div class="fcard">
+      <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+      <h3>汇报中心</h3>
+      <p>根据零件数据、知识库、热点聚合，生成整份汇报。</p>
+      <div class="hit">&gt; 交互：调三块料 → 出汇报</div>
+    </div>
+  </div>
+</section>
+
+<!-- 31 零件工厂画面 -->
+<section class="slide" id="slide-31">
+  <div class="bg-num">31</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>零件工厂 · 打开长这样</div>
+  <h2 class="title rise" style="--i:1">蓝白驾驶舱，<span class="em">四块都在</span></h2>
+  <div class="plant-win rise" style="--i:2">
+    <div class="plant-bar">
+      <span class="plant-dots"><i></i><i></i><i></i></span>
+      <span class="url">零件工厂工作台 · 驾驶舱</span>
+    </div>
+    <div class="plant-body">
+      <div class="plant-side">
+        <div class="plant-nav on">数据驾驶舱</div>
+        <div class="plant-nav">知识库</div>
+        <div class="plant-nav">热点聚合</div>
+        <div class="plant-nav">汇报中心</div>
+      </div>
+      <div class="plant-main">
+        <div class="plant-kpis">
+          <div class="plant-kpi"><b>12,480</b><span>今日产量</span></div>
+          <div class="plant-kpi"><b>98.6%</b><span>合格率</span></div>
+          <div class="plant-kpi"><b>236</b><span>在制工单</span></div>
+          <div class="plant-kpi"><b>14</b><span>交期预警</span></div>
+        </div>
+        <div class="plant-grid">
+          <div class="plant-card">
+            <h4>知识库 · 部门</h4>
+            <div class="dept">生产部<span>班次 / 产能</span></div>
+            <div class="dept">质量部<span>抽检 / 不合格</span></div>
+            <div class="dept">仓储部<span>库存 / 发运</span></div>
+            <div class="dept">销售部<span>订单 / 客户</span></div>
+            <div class="dept">财务部<span>成本 / 回款</span></div>
+          </div>
+          <div class="plant-card">
+            <h4>汇报中心 · 今日</h4>
+            <p class="rpt"><b>调三块料：</b>驾驶舱数据 + 部门知识库 + 热点聚合。<br>接入 DeepSeek，生成今日汇报。<br>友商新闻每 15 分钟刷一轮。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 32 零件工厂提示词 -->
+<section class="slide" id="slide-32">
+  <div class="bg-num">32</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>零件工厂 · 提示词 · 一句一句拆</div>
+  <h2 class="title rise" style="--i:1">先给规划，色调<span class="em">蓝白</span></h2>
+  <div class="prompt-wrap rise" style="--i:2">
+    <div class="prompt-box dense">
+      <div class="prompt-k">COPY · 照着念</div>
+      <p>我想要你搭建整个汽车零件的工作台。里面有很多不同部门的数据。</p>
+      <p><b>1.</b> 第 1 页先给我整个面板、仪表盘、大盘、我的日程等等，其他一些部分你来规划。<b>2. 知识库</b>：各个不同的部门，你给我模拟出整个零件工厂这样一家公司，把所有数据导入进去。<b>3. 热点聚合</b>：所有的友商、同行全部收集出来，每隔 15 分钟左右实时更新一遍，关于他们的最新新闻。<b>4. 汇报中心</b>：接入 AI 大模型 DeepSeek，根据知识库、热点聚合、数据板块，进行整个汇报内容的生成。</p>
+      <p class="dim">你先不用搭建，给到我一个清晰的规划。第二步：根据这整个规划搭建。整个色调以蓝色和白色为主，并且要符合汽车零件生产工厂的风格。最后用 HTML 形式呈现。</p>
+    </div>
+    <div class="why-col tight">
+      <div class="why-row"><span class="why-n">01</span><div><b>开口钉死</b><span>汽车零件工作台。很多不同部门的数据。</span></div></div>
+      <div class="why-row"><span class="why-n">02</span><div><b>第一页</b><span>面板、仪表盘、大盘、日程。其余部分让它自己规划。</span></div></div>
+      <div class="why-row"><span class="why-n">03</span><div><b>知识库</b><span>模拟一家零件工厂公司，各部门数据导进去。</span></div></div>
+      <div class="why-row"><span class="why-n">04</span><div><b>热点 · 15 分钟</b><span>友商、同行新闻，大约每 15 分钟更新一轮。</span></div></div>
+      <div class="why-row"><span class="why-n">05</span><div><b>汇报中心</b><span>DeepSeek 调知识库、热点、数据盘，生成汇报。</span></div></div>
+      <div class="why-row"><span class="why-n">06</span><div><b>先规划再搭</b><span>先给清晰规划。蓝白、工厂风。最后 HTML。</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 33 三步发布网站 -->
+<section class="slide" id="slide-33">
+  <div class="bg-num">33</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>台子做完了 · 怎么给别人</div>
+  <h2 class="title rise" style="--i:1">三步，变成一个<span class="em">网址</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">文件</span><span class="p-name">先有整个网站的文件</span></div><span class="p-desc">文件在你手上</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">资料库</span><span class="p-name">上传到 WorkBuddy 资料库</span></div><span class="p-desc">整份丢进去</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">分享</span><span class="p-name">右上角分享 · 发布为网站</span></div><span class="p-desc">马上就能发给别人</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 34 给谁看 -->
+<section class="slide" id="slide-34">
+  <div class="bg-num">34</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>资料库 · 发布为网站</div>
+  <h2 class="title rise" style="--i:1">给谁看，都是发<span class="em">这一个网址</span></h2>
+  <div class="layers rise" style="--i:2">
+    <div class="layer"><div class="ln">01</div><div><h3>给部门</h3><p>同事打开就能看这张台子。</p></div></div>
+    <div class="layer"><div class="ln">02</div><div><h3>给公司</h3><p>发给公司里的人，不用再传文件夹。</p></div></div>
+    <div class="layer hot"><div class="ln">03</div><div><h3>给客户</h3><p>客户打开的也是这个网址。上传变成网站，给别人看。</p></div></div>
+  </div>
+</section>
+
+<!-- 35 邀请协作 -->
+<section class="slide" id="slide-35">
+  <div class="bg-num">35</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>团队怎么一起改</div>
+  <h2 class="title rise" style="--i:1">分享栏里，有一个<span class="em">邀请协作</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">分享</span><span class="p-name">打开分享那一栏</span></div><span class="p-desc">找到邀请协作</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">加人</span><span class="p-name">把协作成员加进去</span></div><span class="p-desc">一个个加</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">权限</span><span class="p-name">获得链接的人可以编辑</span></div><span class="p-desc">互联网访问，能改</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">链接</span><span class="p-name">把链接复制给他</span></div><span class="p-desc">他打开 WorkBuddy 就能一起做</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 36 十人深度协作 -->
+<section class="slide" id="slide-36">
+  <div class="bg-num">36</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>部门不大 · 十人左右</div>
+  <h2 class="title rise" style="--i:1">直接在 WorkBuddy 里<span class="em">一起改</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">10</div>
+      <div class="feat-lt">深度协作</div>
+      <p class="feat-ld">部门不是特别大，十人左右，就让他直接用 WorkBuddy 操作。部门数据也好，想改这张台子也好，打开就能动手。</p>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard">
+        <div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div>
+        <h3>他自己的数据</h3>
+        <p>把他部门的数据，直接填进去。</p>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div>
+        <h3>他想改台子</h3>
+        <p>跟着你一起，把整张工作台做完。</p>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-clock"><i></i></span></div>
+        <h3>每个数据都能改</h3>
+        <p>打开就能改。不用再把文件传来传去。</p>
+      </div>
+      <div class="fcard">
+        <div class="fviz"><span class="vz-signal"><i></i></span></div>
+        <h3>链接给他就行</h3>
+        <p>权限开成可编辑。他有链接就能进。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 37 实操一小时 -->
+<section class="slide" id="slide-37">
+  <div class="bg-num">37</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>这一页挂一小时 · 先别翻</div>
+  <h2 class="title rise" style="--i:1">实操 · <span class="em">60 分钟</span></h2>
+  <div class="do-wrap rise" style="--i:2">
+    <div class="chk-box">
+      <label class="chk lg"><input type="checkbox"> 用下一页提示词模板，搭一个台子</label>
+      <label class="chk lg"><input type="checkbox"> 网站文件上传到 WorkBuddy 资料库</label>
+      <label class="chk lg"><input type="checkbox"> 右上角分享 · 发布为网站</label>
+      <label class="chk lg"><input type="checkbox"> 把网址发给旁边的人，对方能打开</label>
+      <label class="chk lg"><input type="checkbox"> 团队台：邀请协作，权限改成可编辑</label>
+    </div>
+    <div class="side-stack">
+      <div class="fcard">
+        <h3>卡住怎么办</h3>
+        <p>找不到分享：资料库右上角。<br>对方打不开：你先打开给他看。<br>做歪了：翻下一页，按提示词模板重说一遍。</p>
+      </div>
+      <div class="fcard">
+        <h3>这一小时只做这一件</h3>
+        <p>台子能打开。<br>网址能发出去。<br>有团队的，链接能一起改。</p>
+      </div>
+    </div>
+  </div>
+  <p class="hang rise" style="--i:3">这页挂 60 分钟，先别翻</p>
+</section>
+
+<!-- 38 提示词模板 -->
+<section class="slide" id="slide-38">
+  <div class="bg-num">38</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>提示词模板 · 把【行业】填进去 · 照着念</div>
+  <div class="fx rise" style="--i:1">
+    <div class="fx-col">
+      <div class="tpl-k">COPY · 个人版</div>
+      <div class="fx-h">个人版</div>
+      <p class="tpl-open">帮我做一个<span class="slot">【行业】</span>个人工作台，最后用 HTML 呈现。</p>
+      <p class="tpl-step"><b>第一步</b>仪表盘：打开第一页就能看见这张台子里的所有数据，用面板展示。</p>
+      <p class="tpl-step"><b>第二步</b>知识库：能搜。每个部分都要能继续拓展、写得更细。</p>
+      <p class="tpl-step"><b>第三步</b>热点聚合：你把所有关于<span class="slot">【行业】</span>的热点给我聚合在这个板块，我要能实时看到。</p>
+      <p class="tpl-step"><b>第四步</b>日常工作：知识库和热点做成两个选项，接入 AI 大模型，生成 PPT / 公众号。</p>
+      <p class="tpl-end">先不用去跑。先给我写一份完整规划。规划出来之后，再按规划搭建。<br>色调<span class="slot">【色调】</span>。最后用 HTML 给我。</p>
+    </div>
+    <div class="fx-col hot">
+      <div class="tpl-k">COPY · 团队版</div>
+      <div class="fx-h">团队版</div>
+      <p class="tpl-open">帮我做一个<span class="slot">【行业】</span>团队工作台，最后用 HTML 呈现。</p>
+      <p class="tpl-step"><b>第一步</b>仪表盘：打开第一页就能看见整张台子的所有数据，用面板展示。</p>
+      <p class="tpl-step"><b>第二步</b>知识库：做成各个部门。点进去就能看到这个部门的数据、信息、职能。</p>
+      <p class="tpl-step"><b>第三步</b>热点聚合：把<span class="slot">【行业】</span>的外部热点、同行情报聚在这个板块，实时更新。</p>
+      <p class="tpl-step"><b>第四步</b>汇报中心：接入 AI 大模型，根据仪表盘、知识库、热点聚合，生成今日汇报。</p>
+      <p class="tpl-end">先不用搭建。先给我一份清晰规划。规划好了再按规划搭建。<br>色调<span class="slot">【色调】</span>。最后用 HTML 呈现。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 39 收束 -->
+<section class="slide" id="slide-39">
+  <div class="bg-num">39</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>文件进资料库 · 发布就是网站</div>
+  <h2 class="quote rise" style="--i:2">一个网址，<br>就能<span class="em">给别人</span></h2>
+  <p class="quote-2 rise" style="--i:3">要一起改，就邀请协作。</p>
+  <button class="cta rise" style="--i:4">一个网址，就能给别人<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">发布为网站</span>
+    <span class="chip">邀请协作</span>
+    <span class="chip yellow">提示词模板</span>
+  </div>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">39</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>

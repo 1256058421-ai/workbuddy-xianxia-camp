@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · 内部资料整理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1,.center-slide{text-align:center}
+.tpl{
+  width:100%;max-width:1040px;margin-top:22px;
+  display:flex;flex-direction:column;gap:12px;text-align:left;
+}
+.tpl-row{
+  display:flex;gap:18px;align-items:flex-start;
+  background:var(--panel);border:1px solid var(--line);border-radius:16px;
+  padding:16px 20px;
+  transition:border-color .3s,background .3s;
+}
+.tpl-row:hover{border-color:rgba(1,200,134,.5);background:var(--panel-2)}
+.tpl-num{
+  min-width:54px;padding-top:4px;
+  font:900 italic 34px/1 "Inter",sans-serif;
+  color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);
+}
+.tpl-row:hover .tpl-num{-webkit-text-stroke:0;color:var(--g2);text-shadow:0 0 18px rgba(1,200,134,.45)}
+.tpl-body{flex:1;min-width:0}
+.tpl-tag{
+  display:inline-block;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);
+  border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);
+  border-radius:6px;padding:4px 11px;margin-bottom:8px;
+}
+.tpl.compact{gap:8px;margin-top:16px}
+.tpl.compact .tpl-row{padding:11px 18px}
+.tpl.compact .tpl-q{font-size:15.5px;line-height:1.6}
+.shot-duo{
+  display:flex;gap:22px;align-items:center;width:100%;max-width:1180px;margin-top:20px;
+}
+.shot-duo .path{flex:1;margin-top:0;min-width:0}
+.shot-duo .path .p-row{padding:10px 8px}
+.shot-duo .path .p-num{min-width:48px;font-size:28px}
+.shot-duo .path .p-name{font-size:16px}
+.shot-frame{
+  flex:1.15;min-width:0;border-radius:16px;border:1px solid var(--line);
+  overflow:hidden;background:#111;box-shadow:0 18px 48px rgba(0,0,0,.35);
+}
+.shot-frame img{display:block;width:100%;height:auto;max-height:52vh;object-fit:contain;object-position:center bottom}
+.shot-frame.ui img{object-position:center;max-height:50vh}
+.shot-duo.ui .shot-frame{flex:1.45}
+.shot-duo.ui .path{flex:.9}
+.cover-logo{
+  width:72px;height:72px;object-fit:contain;border-radius:18px;display:block;margin:0 auto 16px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(44px,7.6vw,108px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.cover-sub{
+  margin-top:18px;font-size:clamp(28px,3.6vw,46px);font-weight:900;letter-spacing:.04em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:680px;margin-left:auto;margin-right:auto}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 clamp(40px,4.4vw,64px)/1.1 "Noto Sans SC","Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.45));margin-bottom:12px;width:fit-content;letter-spacing:.12em}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+  text-align:center;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:680px;text-align:center;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:8.3%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid .fcard{min-height:156px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid{grid-template-columns:1fr 1fr}
+  .shot-duo{flex-direction:column}
+  .shot-frame img{max-height:34vh}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">内部资料整理</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <h1 class="mega rise" style="--i:1">WORKBUDDY<span class="arrow">&gt;</span></h1>
+  <div class="cover-sub rise" style="--i:2">内部资料<span class="em">整理</span></div>
+  <p class="cover-desc rise" style="--i:3">先把 WorkBuddy 接上 IMA。再把库里的东西，做成你要的 PPT、网页、报告。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">先接 IMA</span>
+    <span class="chip"><span class="gt">&gt;</span>资料从哪来</span>
+    <span class="chip"><span class="gt">&gt;</span>法律演示</span>
+    <span class="chip"><span class="gt">&gt;</span>实操 30 分钟</span>
+  </div>
+</section>
+
+<!-- 02 connect topic -->
+<section class="slide center-slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>先把线接上</div>
+  <h2 class="quote rise" style="--i:1">先把 WorkBuddy<br>接上 <span class="em">IMA 知识库</span></h2>
+  <p class="quote-2 rise" style="--i:2">库在 IMA 里。干活在 WorkBuddy 里。不接上，对话框里调不到你的资料。</p>
+  <div class="end-chips rise" style="--i:3">
+    <span class="chip">连接器</span>
+    <span class="chip">MCP 是什么</span>
+    <span class="chip">扫码 · 同一个微信</span>
+  </div>
+</section>
+
+<!-- 03 connector -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>连接器</div>
+  <h2 class="title rise" style="--i:1">连接器是什么？<span class="em">WorkBuddy 拿它去接别的软件。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">能接</div>
+      <div class="feat-lt">飞书、知识库、股票软件，<em>都能接</em></div>
+      <p class="feat-ld">WorkBuddy 里有个功能叫连接器。不是再下一堆软件，是把已经在用的那些，接到对话框里来用。</p>
+      <span class="cloud-pill"><i class="pdot"></i>今晚只接一件：IMA 知识库</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>接飞书</h3><p>表格、知识库，接上就能查。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>接 IMA</h3><p>你的知识库，接上就能调用。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>接股票软件</h3><p>东方财富这类，接上就能搜行情。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>还能接别的</h3><p>哪个软件开了口子，就能接。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 MCP -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>MCP</div>
+  <h2 class="title rise" style="--i:1">MCP 是什么？<span class="em">软件给你一个口子，让你搜里面的数据。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">接口</div>
+      <div class="feat-lt">三个字母先别管，<em>记这句话</em></div>
+      <p class="feat-ld">某个软件把它里面的数据打包，给你开一个接口。你接进去，就能搜到里面的资料。不是把软件搬过来，是给了你一个能查的入口。</p>
+      <span class="cloud-pill"><i class="pdot"></i>连接器，用的就是这套口子</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>它打包</h3><p>软件自己把数据整理好，准备让外面来查。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>你接入</h3><p>WorkBuddy 通过连接器，把这个口子接上。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>你能搜</h3><p>接上之后，在对话框里问，问的是那边的数据。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>今晚这个口子</h3><p>IMA 知识库把口子开好了。我们去接。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 metaphor -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>一个比喻</div>
+  <h2 class="title rise" style="--i:1">你就这么想：<span class="em">每个软件都是一个小小的百度。</span></h2>
+  <div class="xgrid rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>接上知识库</h3><p>相当于你的资料变成了一个百度。问一句，就能搜到库里的内容。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>接上飞书</h3><p>飞书里有表格、有知识库。接进去，查一下就能知道里面写了什么。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>接上东方财富</h3><p>股市软件把口子开给你。搜一下，真能搜到里面的行情信息。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">MCP 就是这件事：<strong>大软件给你一个接口，让你搜它里面的数据。</strong></p>
+</section>
+
+<!-- 06 scan -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>操作 · 扫码</div>
+  <h2 class="title rise" style="--i:1">打开连接器，<span class="em">点 ima。</span></h2>
+  <div class="shot-duo ui rise" style="--i:2">
+    <div class="path">
+      <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">左侧</span><span class="p-name">专家 / 技能 / 连接器</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">点开</span><span class="p-name">找到 ima，点进去</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">扫码</span><span class="p-name">微信扫码授权</span></div><span class="p-gt">&gt;</span></div>
+    </div>
+    <div class="shot-frame ui">
+      <img src="ref/wb-connector-ima.png" alt="连接器里点 ima">
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">就在这一页里找 ima。扫完还没完，下一页对一下微信。</p>
+</section>
+
+<!-- 07 same wechat -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>操作 · 对号</div>
+  <h2 class="title rise" style="--i:1">微信必须是同一个。<span class="em">号不一致，库是空的。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">两个号</span></div>
+      <div class="pane-body">
+        <div class="msg u">扫码也成功了，怎么库里什么都没有？</div>
+        <div class="msg b">WorkBuddy 登的是这个微信，IMA 登的是另一个。</div>
+        <div class="msg t">授权过了，连上的不是你那份库。</div>
+      </div>
+      <div class="pane-foot">号对不上 · 库是空的</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">同一个微信</span><span class="live">对上</span></div>
+      <div class="pane-body">
+        <div class="msg u">WorkBuddy 和 IMA，用同一个微信</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">先对一下号</div>
+          <ul class="steps">
+            <li class="ok">IMA 是哪个微信登的</li>
+            <li class="ok">WorkBuddy 扫码用同一个</li>
+            <li class="run">对上了，才能勾到你的库</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">同一个微信 · 才能调到资料</div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 plus button -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>操作 · 勾上</div>
+  <h2 class="title rise" style="--i:1">回到对话框。<span class="em">加号里把 ima 打开。</span></h2>
+  <div class="shot-duo ui rise" style="--i:2">
+    <div class="path">
+      <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">加号</span><span class="p-name">点输入框左边的加号</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">连接器</span><span class="p-name">点「连接器」</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">打开</span><span class="p-name">把 ima 那个开关打开</span></div><span class="p-gt">&gt;</span></div>
+    </div>
+    <div class="shot-frame ui">
+      <img src="ref/wb-plus-ima.png" alt="对话框加号里打开 ima">
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">扫码是授权。这里是告诉它：<strong>这次对话要用 ima。</strong> 两步都要做。</p>
+</section>
+
+<!-- 02 why now -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>接上之后</div>
+  <h2 class="title rise" style="--i:1">库已经接上了。<span class="em">下一件最要紧的事</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">只停在调用</span></div>
+      <div class="pane-body">
+        <div class="msg u">资料导进去了，也能问了</div>
+        <div class="msg b">然后呢？还是一段文字。<br>培训还是没课件，汇报还是没报告。</div>
+        <div class="msg t">接上知识库，不等于活做完了。</div>
+      </div>
+      <div class="pane-foot">会问，还做不出文件</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">输出</span></div>
+      <div class="pane-body">
+        <div class="msg u">把这份内部资料，整理成我要的形式</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">今晚要做的事</div>
+          <ul class="steps">
+            <li class="ok">资料已经在库里</li>
+            <li class="ok">WorkBuddy 已经连上 IMA</li>
+            <li class="ok">按你的需求去输出</li>
+            <li class="run">PPT、网页，你说了算</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">整理内部资料，就是做成文件</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 what it means -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>什么意思</div>
+  <h2 class="title rise" style="--i:1">什么叫整理？<span class="em">不是再存一遍，是做成文件。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">做成文件</div>
+      <div class="feat-lt">整理，就是<em>输出</em></div>
+      <p class="feat-ld">群里说过：来之前把内部资料准备好。刚才也已经上传、调用过了。现在把这些东西，做成你想要的那份。</p>
+      <span class="cloud-pill"><i class="pdot"></i>需求你自己加上去</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>课前准备</h3><p>各位来之前，内部资料该整理的，先整理好。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>刚才做过</h3><p>已经上传，已经问过。库不是空的。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>现在要出</h3><p>PPT、HTML、报告，你想要哪种就哪种。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>加上你的要求</h3><p>给谁看、多长、什么口径，一并写进指令。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 tonight map -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>今晚安排</div>
+  <h2 class="title rise" style="--i:1">今晚这条线。<span class="em">先看步骤，再动手。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">来源</span><span class="p-name">资料从哪来</span></div><span class="p-desc">自己的内部资料 · 订阅广场</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">三步</span><span class="p-name">读 → 规划 → 执行</span></div><span class="p-desc">不要一口吃完</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">演示</span><span class="p-name">我先走一遍法律</span></div><span class="p-desc">你们看着，别急着点</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">实操</span><span class="p-name">自己做 30 分钟</span></div><span class="p-desc">用你自己的行业</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 05 step by step -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>一步一步</div>
+  <h2 class="title rise" style="--i:1">目标很大。<span class="em">操作必须一步一步。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">一口吃完</span></div>
+      <div class="pane-body">
+        <div class="msg u">读取知识库，直接给我做一份行业报告 PPT，还要网页版</div>
+        <div class="msg b">东西搅在一起。它不知道先读哪份，也不知道你到底要什么。</div>
+        <div class="msg t">目标可以大。指令不能糊。</div>
+      </div>
+      <div class="pane-foot">一次说完所有事 · 容易乱</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">分步</span><span class="live">清楚</span></div>
+      <div class="pane-body">
+        <div class="msg u">先读这个文件夹，给我个大概总结</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">今晚就这三步</div>
+          <ul class="steps">
+            <li class="ok">先读，看它懂不懂这份资料</li>
+            <li class="ok">再让它写规划</li>
+            <li class="run">规划清楚了，再按格式执行</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">最重要的思路：一步一步来</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 source 1 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>资料从哪来 · 1</div>
+  <h2 class="title rise" style="--i:1">第一处：<span class="em">你自己准备的内部资料。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">自己的资料</div>
+      <div class="feat-lt">公司里那些文件，<em>今晚就能用</em></div>
+      <p class="feat-ld">制度、方案、报表、自己囤的文件。很多同学来之前已经整理过。刚才也导进个人库了。今晚就可以拿它来出活。</p>
+      <span class="cloud-pill"><i class="pdot"></i>有内部资料的，优先用内部资料</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>已经在库里</h3><p>刚才上传过、问过。别再当网盘搬家。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>记住文件夹名</h3><p>后面指令要写：读取某某文件夹。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>没有也没关系</h3><p>用第二处：订阅广场补行业资料。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>两种都能用</h3><p>自己的 + 订来的，后面指令写法一样。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 source 2 plaza -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>资料从哪来 · 2</div>
+  <h2 class="title rise" style="--i:1">第二处：<span class="em">IMA 的订阅广场。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">订阅广场</div>
+      <div class="feat-lt">别人上传的资料，<em>非常多</em></div>
+      <p class="feat-ld">订阅知识库，你可以把它理解成一个订阅广场。很多人在上面传自己的资料、信息。点进去，行业资料一大堆。</p>
+      <span class="cloud-pill"><i class="pdot"></i>打开 IMA，点订阅广场</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>不是你自己的库</h3><p>个人库是你自己的。广场是别人做好、你来订的。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>用来补行业</h3><p>自己资料不够，就来这儿搜你的行业。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>订完就能调</h3><p>跟刚才调用个人库一样，先看、再问、再输出。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>有的要钱</h3><p>先尽量选免费的。今晚练习，别一上来买。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 how to search -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>怎么搜</div>
+  <h2 class="title rise" style="--i:1">点订阅广场。<span class="em">右上角搜索，打你的行业。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">打开</span><span class="p-name">打开订阅广场</span></div><span class="p-desc">IMA 里那个入口</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">搜索</span><span class="p-name">点右上角搜索框</span></div><span class="p-desc">别在广场里瞎翻</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">输入</span><span class="p-name">输入你的行业两个字</span></div><span class="p-desc">财务、招标、你自己的行当</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">订阅</span><span class="p-name">先订一份免费的</span></div><span class="p-desc">记住这个文件夹的名字</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">不同行业，把不同需求打进去，就能拿到比较新的资料。</p>
+</section>
+
+<!-- 09 same logic -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>一个道理</div>
+  <h2 class="title rise" style="--i:1">财务也好，招标也好。<span class="em">一个道理。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">做财务</span><span class="live">示例</span></div>
+      <div class="pane-body">
+        <div class="msg u">搜索框里打下「财务」</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">出来一堆财务资料</div>
+          <ul class="steps">
+            <li class="ok">挑一份免费的订下来</li>
+            <li class="ok">点进去可以查看</li>
+            <li class="run">后面就可以调用、输出</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">搜行业两个字，一个道理</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">做招标</span><span class="live">示例</span></div>
+      <div class="pane-body">
+        <div class="msg u">搜索框里打下「招标」</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">招标相关就出来了</div>
+          <ul class="steps">
+            <li class="ok">还是右上角搜索</li>
+            <li class="ok">还是先选免费</li>
+            <li class="run">行业两个字，换你自己的</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">你们实操时，打自己的行业</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 view + free -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>订完之后</div>
+  <h2 class="title rise" style="--i:1">订到之后。<span class="em">可以看，可以调用。先选免费。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">先选免费</div>
+      <div class="feat-lt">拿到资料，<em>先别急着出成品</em></div>
+      <p class="feat-ld">跟刚才个人库一样：能打开看，能在里面问。有些订阅要收费。今晚练习，尽可能选免费的。</p>
+      <span class="cloud-pill"><i class="pdot"></i>内部资料也能走后面同一套指令</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>可以查看</h3><p>先点开翻一翻，确认这库是你要的行业。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>可以调用</h3><p>跟刚才问个人库一样，先问得动，再输出。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>先免费</h3><p>收费的先放一放。练习用免费就够。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>两种都能用</h3><p>自己的内部资料，或刚订的行业库，都行。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 go to workbuddy -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>回到 WorkBuddy</div>
+  <h2 class="title rise" style="--i:1">然后回到 WorkBuddy。<span class="em">在对话框里干活。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">确认</span><span class="p-name">确认 IMA 已经连上</span></div><span class="p-desc">同一微信 · 库能勾到</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">选库</span><span class="p-name">内部资料，或刚订的那份</span></div><span class="p-desc">文件夹名字要写对</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">发指令</span><span class="p-name">下面三串指令，分开发</span></div><span class="p-desc">读 → 规划 → 执行</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">IMA 里是找资料。WorkBuddy 里是<strong>做成你要的那份东西</strong>。</p>
+</section>
+
+<!-- 12 step 1 prompt -->
+<section class="slide" id="slide-19">
+  <div class="bg-num">19</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第一步</div>
+  <h2 class="title rise" style="--i:1">第一串指令：<span class="em">先读，再要一个大概总结。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">对话框 · 第一句</span><span class="live">照抄</span></div>
+      <div class="pane-body">
+        <div class="msg u">读取「某某文件夹」，给我一个大概的总结。</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">把名字换成你订的那个</div>
+          <ul class="steps">
+            <li class="ok">写你刚订阅的文件夹名</li>
+            <li class="ok">内部资料就写你自己建的那个</li>
+            <li class="run">它会给你一份大概总结</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">这是第 1 步 · 先看它读没读到</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">别这样开</span></div>
+      <div class="pane-body">
+        <div class="msg u">直接给我做 PPT</div>
+        <div class="msg b">它还没读到资料，做出来会对不上。</div>
+        <div class="msg t">先让它读。读完再往下。</div>
+      </div>
+      <div class="pane-foot">跳过读取，后面都白做</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 step 2 plan -->
+<section class="slide" id="slide-20">
+  <div class="bg-num">20</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第二步</div>
+  <h2 class="title rise" style="--i:1">第二串：<span class="em">根据这份资料，先写规划。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">对话框 · 第二句</span><span class="live">规划</span></div>
+      <div class="pane-body">
+        <div class="msg u">我要做一份某某形式的文件，比如行业报告 / PPT。根据刚才这份资料，帮我把规划写清楚。先不急着生成文件。</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">你要什么，写什么</div>
+          <ul class="steps">
+            <li class="ok">行业报告、内部汇总、培训提纲都行</li>
+            <li class="ok">让它把结构写清楚</li>
+            <li class="run">规划不清楚，先别让它动手做</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">这是第 2 步 · 先把做法写清楚</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">规划不清楚</span></div>
+      <div class="pane-body">
+        <div class="msg u">随便做一份就行</div>
+        <div class="msg b">它会写得很满，但不是你要交的那份。</div>
+        <div class="msg t">规划这一步，就是把「你要什么」说清楚。</div>
+      </div>
+      <div class="pane-foot">没规划，做完才发现跑偏</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 step 3 execute -->
+<section class="slide" id="slide-21">
+  <div class="bg-num">21</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>第三步</div>
+  <h2 class="title rise" style="--i:1">第三串：<span class="em">按规划执行，你要什么格式就什么格式。</span></h2>
+  <div class="xgrid rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>HTML / 网页</h3><p>要能打开看、能投屏的页面。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>PPT</h3><p>培训、汇报，直接要课件。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>PDF / Word</h3><p>报告、纪要、给别人转发的文档。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">指令就写：<strong>按刚才的规划去执行，输出成某某格式。</strong> Excel 表格也可以，按你的需求来。</p>
+</section>
+
+<!-- 15 add your needs -->
+<section class="slide" id="slide-22">
+  <div class="bg-num">22</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>加上需求</div>
+  <h2 class="title rise" style="--i:1">格式之外。<span class="em">把自己的需求写进去。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">写清需求</div>
+      <div class="feat-lt">它不知道你要交差给谁，<em>你得说</em></div>
+      <p class="feat-ld">光说「做个 PPT」不够。给谁看、多长、什么口径、不要什么，一并写上。这才是你的任务内容。</p>
+      <span class="cloud-pill"><i class="pdot"></i>需求越具体，出来的越像你要的</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>给谁看</h3><p>老板、新人、客户，三种写法完全不一样。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>多长</h3><p>10 页还是 30 页，先说死。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>什么口径</h3><p>只用这份资料，别编外面的数字。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>不要什么</h3><p>别写成网文，别加你没给过的案例。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 what you get -->
+<section class="slide" id="slide-23">
+  <div class="bg-num">23</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>你会拿到什么</div>
+  <h2 class="title rise" style="--i:1">做完你会拿到。<span class="em">一份能用的整理。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">能交出去</div>
+      <div class="feat-lt">不是又一份收藏，<em>是能交出去的东西</em></div>
+      <p class="feat-ld">内部资料走这套，出来的是你自己业务的整理。订阅广场走这套，出来的是这个行业比较新的汇总。格式你自己定。</p>
+      <span class="cloud-pill"><i class="pdot"></i>这就是整条内部资料流程</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>用自己的库</h3><p>制度、方案、内部文件，整理成能用的版本。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>用订来的库</h3><p>行业资料变成报告、课件、表格。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>格式你定</h3><p>网页、PPT、PDF、Word、Excel，按场景选。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>还没做？</h3><p>下面我先演示法律。看完你们自己上手。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 demo + 30 min -->
+<section class="slide" id="slide-24">
+  <div class="bg-num">24</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>演示 + 实操</div>
+  <h2 class="title rise" style="--i:1">我先走一遍法律。<span class="em">然后你们自己做 30 分钟。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">看我</span><span class="p-name">订阅广场搜「法律」，订一份免费的</span></div><span class="p-desc">记住文件夹名</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">看我</span><span class="p-name">WorkBuddy：读取 → 规划 → 按格式执行</span></div><span class="p-desc">三串指令分开</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">你们</span><span class="p-name">换成自己的行业，或自己的内部资料</span></div><span class="p-desc">实操 30 分钟</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">卡住就举手。先订到、先读到，再谈成品。</p>
+</section>
+
+<!-- 18 privacy topic -->
+<section class="slide center-slide" id="slide-25">
+  <div class="bg-num">25</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>接下来这个主题</div>
+  <h2 class="quote rise" style="--i:1">先挡住隐私，<br>再讲<span class="em">数据脱敏</span></h2>
+  <p class="quote-2 rise" style="--i:2">内部资料要做成文件。两件事：别让数据被拿去训练；做出来的文件里，别把真名真数据露出去。</p>
+  <div class="end-chips rise" style="--i:3">
+    <span class="chip">关掉训练开关</span>
+    <span class="chip">提示词里要求脱敏</span>
+  </div>
+</section>
+
+<!-- 19 op1 turn off training -->
+<section class="slide" id="slide-26">
+  <div class="bg-num">26</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>操作一</div>
+  <h2 class="title rise" style="--i:1">先关掉。<span class="em">体验优化计划。</span></h2>
+  <div class="shot-duo rise" style="--i:2">
+    <div class="path">
+      <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">头像</span><span class="p-name">左下角点头像，进设置</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">通用</span><span class="p-name">滑到最下面，「隐私」这一栏</span></div><span class="p-gt">&gt;</span></div>
+      <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">关掉</span><span class="p-name">「体验优化计划」拨成关闭</span></div><span class="p-gt">&gt;</span></div>
+    </div>
+    <div class="shot-frame">
+      <img src="ref/wb-privacy-setting.png" alt="设置里关闭体验优化计划">
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">这一招是防对话数据被拿去改进模型。关掉，就不会从这条路漏出去。</p>
+</section>
+
+<!-- 20 op2 prompt desensitize -->
+<section class="slide" id="slide-27">
+  <div class="bg-num">27</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>操作二</div>
+  <h2 class="title rise" style="--i:1">文件要给人看，<span class="em">提示词里再加一句脱敏。</span></h2>
+  <div class="tpl rise" style="--i:2">
+    <div class="tpl-row">
+      <span class="tpl-num">01</span>
+      <div class="tpl-body">
+        <span class="tpl-tag">补在资料后面</span>
+        <div class="tpl-q">帮我把以上给到你的所有的数据，进行一个<b>脱敏和加密处理</b>。</div>
+      </div>
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">上一招防的是被拿去训练。这一招防的是做出来的文件里还写着真名、真数据。名字会变成<strong>林某东</strong>这种。</p>
+</section>
+
+<!-- 21 prompt template -->
+<section class="slide" id="slide-28">
+  <div class="bg-num">28</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>提示词模板</div>
+  <h2 class="title rise" style="--i:1">自己做的时候，<span class="em">就按这四句发。</span></h2>
+  <div class="tpl compact rise" style="--i:2">
+    <div class="tpl-row">
+      <span class="tpl-num">01</span>
+      <div class="tpl-body">
+        <span class="tpl-tag">第一步 · 读取</span>
+        <div class="tpl-q">读取「<b>文件夹名</b>」，给我一个大概的总结。</div>
+      </div>
+    </div>
+    <div class="tpl-row">
+      <span class="tpl-num">02</span>
+      <div class="tpl-body">
+        <span class="tpl-tag">第二步 · 规划</span>
+        <div class="tpl-q">我要做一份某某形式的文件，比如<b>行业报告 / PPT</b>。根据刚才这份资料，帮我把规划写清楚。<b>先不急着生成文件。</b></div>
+      </div>
+    </div>
+    <div class="tpl-row">
+      <span class="tpl-num">03</span>
+      <div class="tpl-body">
+        <span class="tpl-tag">第三步 · 脱敏</span>
+        <div class="tpl-q">帮我把以上给到你的所有的数据，进行一个<b>脱敏和加密处理</b>。</div>
+      </div>
+    </div>
+    <div class="tpl-row">
+      <span class="tpl-num">04</span>
+      <div class="tpl-body">
+        <span class="tpl-tag">第四步 · 执行</span>
+        <div class="tpl-q">按刚才的规划去执行。输出成 <b>PPT</b>（或 HTML / PDF / Word / Excel）。只用这份资料，不要编外面没有的内容。</div>
+      </div>
+    </div>
+  </div>
+  <p class="note-bar rise" style="--i:3">「文件夹名」换成你订的那个，或你自己内部资料那个。<strong>四句分开发</strong>，不要一次说完。</p>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">28</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>

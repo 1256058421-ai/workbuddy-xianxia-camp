@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · IMA 知识库不是网盘</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1{text-align:center}
+.cover-logo{
+  width:88px;height:88px;object-fit:contain;border-radius:22px;display:block;margin:0 auto 22px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:680px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+  text-align:center;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:680px;text-align:center;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:8.3%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid .fcard{min-height:156px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid{grid-template-columns:1fr 1fr}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">LESSON_IMA / 25MIN + LAB</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <h1 class="mega rise" style="--i:1">IMA<span class="arrow">&gt;</span></h1>
+  <div class="cover-sub rise" style="--i:2">知识库<span class="em">不是网盘</span></div>
+  <p class="cover-desc rise" style="--i:3">先搞懂它是什么，再把自己的资料导进去问。IMA 调用完全免费，但今晚先会文字，做不了 PPT。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">理论 25 分钟</span>
+    <span class="chip"><span class="gt">&gt;</span>个人库小练习</span>
+    <span class="chip"><span class="gt">&gt;</span>共享库后面讲</span>
+    <span class="chip"><span class="gt">&gt;</span>完全免费</span>
+  </div>
+</section>
+
+<!-- 02 tonight -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TONIGHT</div>
+  <h2 class="title rise" style="--i:1">今晚两段。<span class="em">理论讲完，立刻上手。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">理论 · 25′</span><span class="p-name">知识库是什么</span></div><span class="p-desc">云端本地 · 不是网盘 · IMA 三种库</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">实操</span><span class="p-name">导入自己的资料，开始调用</span></div><span class="p-desc">下载 · 建文件夹 · 提问</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">发现</span><span class="p-name">它只能做文字交流</span></div><span class="p-desc">能讲书、能抽概念，出不了 PPT</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">下一步</span><span class="p-name">再把 WorkBuddy 接上 IMA</span></div><span class="p-desc">要出活，才需要这一步</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 03 cloud vs local -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>CLOUD / LOCAL</div>
+  <h2 class="title rise" style="--i:1">先分清：<span class="em">本地活在这台电脑，云端换电脑还在。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">本地</span></div>
+      <div class="pane-body">
+        <div class="msg u">换一台电脑，我的项目呢？</div>
+        <div class="msg b">还在原来那台电脑的硬盘里。<br>这台新电脑上，没有。</div>
+        <div class="msg t">WorkBuddy 本身是本地工具。文件没跟着你走。</div>
+      </div>
+      <div class="pane-foot">活在这一台 · 换电脑就断</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">云端 · IMA</span><span class="live">同步</span></div>
+      <div class="pane-body">
+        <div class="msg u">资料放进 IMA 知识库</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">人走，库还在</div>
+          <ul class="steps">
+            <li class="ok">微信扫码登录</li>
+            <li class="ok">电脑、手机、小程序同一份库</li>
+            <li class="ok">换电脑，打开就能问</li>
+            <li class="run">今晚用的，就是这套云端库</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">知识库要能随时问 · 所以放云端</div>
+    </div>
+  </div>
+</section>
+
+<!-- 04 what is kb -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT IS IT</div>
+  <h2 class="title rise" style="--i:1">知识库是什么？<span class="em">存进去，是为了问回来。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">问</div>
+      <div class="feat-lt">一句话：<em>会回答的资料柜</em></div>
+      <p class="feat-ld">把书、制度、内部文件丢进去。下次你不用翻文件夹，问一句，它从你给的材料里找答案。</p>
+      <span class="cloud-pill"><i class="pdot"></i>今晚我们用的是腾讯 IMA 知识库</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>你负责存</h3><p>内部资料、PDF、一本书、自己的文件。有什么用什么。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>它负责找</h3><p>这本书大概讲什么？这个概念在哪一章？直接问。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>免费调用</h3><p>IMA 里这样问，现在完全免费。打开就能用。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>先会文字</h3><p>今晚先会「问」。PPT、面板那些夸张成品，后面再接 WorkBuddy。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 vs drive -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NOT A DRIVE</div>
+  <h2 class="title rise" style="--i:1">跟网盘的区别：<span class="em">网盘是柜子，知识库是顾问。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">网盘 / 收藏夹</span></div>
+      <div class="pane-body">
+        <div class="msg u">资料都丢网盘了，用的时候找一下</div>
+        <div class="msg b">文件在。你得自己点开、自己翻、自己记页码。</div>
+        <div class="msg t">存了 ≠ 会用。人还是复读机。</div>
+      </div>
+      <div class="pane-foot">只存 · 靠翻 · 找的是文件名</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">IMA 知识库</span><span class="live">可问</span></div>
+      <div class="pane-body">
+        <div class="msg u">把这本书丢进去。第三章那个概念是什么？</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">从你给的材料里答</div>
+          <ul class="steps">
+            <li class="ok">读完整本书的结构</li>
+            <li class="ok">抽出那个概念</li>
+            <li class="ok">用白话告诉你</li>
+            <li class="run">你不用自己翻 300 页</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">存完能问 · 问的是内容</div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 what to store -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT GOES IN</div>
+  <h2 class="title rise" style="--i:1">往里面存什么？<span class="em">你自己真正会用的东西。</span></h2>
+  <div class="xgrid rise" style="--i:2">
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>书 / PDF</h3><p>教材、手册、报告。丢进去就能问：这本书讲什么，某个概念是什么。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>内部文件</h3><p>公司制度、自己的方案、团队文档。有内部资料的，今晚就用内部资料。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>自己平时囤的</h3><p>公众号、Word、表格。先别追求完美分类，先能问回来。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">别把整个网盘无目的搬家。先选<strong>今晚真会问</strong>的那几份。</p>
+</section>
+
+<!-- 07 what it can do -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT IT CAN DO</div>
+  <h2 class="title rise" style="--i:1">它都能干嘛？<span class="em">先会这三件。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">讲书</span><span class="p-name">这本书大致讲什么</span></div><span class="p-desc">整本丢进去，先给你结构</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">抽概念</span><span class="p-name">里面某个概念是什么</span></div><span class="p-desc">不用自己翻目录</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">对资料</span><span class="p-name">表格、数据、制度口径</span></div><span class="p-desc">问你自己库里的数字和规定</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">到此为止，都是<strong>文字层面的交流</strong>。这就是 IMA 知识库本身会的事。</p>
+</section>
+
+<!-- 08 cloud not local -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>CLOUD / LOCAL</div>
+  <h2 class="title rise" style="--i:1">这是云端知识库。<span class="em">不是本地库。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">本地知识库</span></div>
+      <div class="pane-body">
+        <div class="msg u">换一台电脑，这些内容还有吗？</div>
+        <div class="msg b">没有了。<br>还在原来那台电脑的硬盘里。</div>
+        <div class="msg t">本地库跟着电脑走。电脑换了，库就断了。</div>
+      </div>
+      <div class="pane-foot">换电脑 · 内容没了</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">云端知识库</span><span class="live">同步</span></div>
+      <div class="pane-body">
+        <div class="msg u">资料放进云端</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">人走，库还在</div>
+          <ul class="steps">
+            <li class="ok">不绑死这一台电脑</li>
+            <li class="ok">换电脑，打开就能问</li>
+            <li class="ok">知识还在原来那个库里</li>
+            <li class="run">今晚用的，就是云端库</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">换电脑 · 内容还在</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 class faq -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>CLASS FAQ</div>
+  <h2 class="title rise" style="--i:1">很多同学会问：<span class="em">同一个账号，文件怎么没了？</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">本地软件</span><span class="p-name">WorkBuddy 调的是这台电脑上的东西</span></div><span class="p-desc">它本身是本地 AI 编程工具</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">账号只记积分</span><span class="p-name">同一个账号，只记录积分和用量</span></div><span class="p-desc">并不记录任何文件</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">所以会空</span><span class="p-name">换电脑登录，积分还在，文件没有</span></div><span class="p-desc">文件没跟着账号走</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">不是账号坏了。是 <strong>WorkBuddy 本来就不存你的文件</strong>。</p>
+</section>
+
+<!-- 10 ima stays -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THE DIFFERENCE</div>
+  <h2 class="title rise" style="--i:1">IMA 知识库是云端的。<span class="em">换电脑，还在。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span></div>
+      <div class="pane-body">
+        <div class="msg u">换电脑，同一个账号登录</div>
+        <div class="msg b">积分还在。文件没有。</div>
+        <div class="msg t">本地工具，只记用量，不记文件。</div>
+      </div>
+      <div class="pane-foot">本地 · 跟着这台电脑</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">IMA 知识库</span><span class="live">云端</span></div>
+      <div class="pane-body">
+        <div class="msg u">换一台电脑，那些知识还有吗？</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">还在那里</div>
+          <ul class="steps">
+            <li class="ok">云端知识库</li>
+            <li class="ok">内容跟着账号走</li>
+            <li class="ok">换电脑，打开就能问</li>
+            <li class="run">这就是比较大的区别</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">云端 · 人走库还在</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 we use ima -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WE USE IMA</div>
+  <h2 class="title rise" style="--i:1">我们用的是 <span class="em">IMA</span> 知识库。</h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">IMA</div>
+      <div class="feat-lt">腾讯的云端库，<em>微信就能登</em></div>
+      <p class="feat-ld">不用另注册一套账号。电脑客户端、网页、手机、微信小程序，同一份资料。</p>
+      <span class="cloud-pill"><i class="pdot"></i>下载：ima.qq.com</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>为什么选它</h3><p>跟微信近，公众号、聊天文件好进。换电脑还能问。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>现在免费</h3><p>这样把资料丢进去、在里面提问，直接调用就可以。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>三种库</h3><p>个人、共享、订阅广场。今晚主练个人库。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>和 WorkBuddy</h3><p>IMA 管「懂你的资料」。WorkBuddy 管「把资料做成活」。先会前者。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 three types -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THREE LIBRARIES</div>
+  <h2 class="title rise" style="--i:1">IMA 里三种库。<span class="em">今晚只用第一种。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">今晚</span><span class="p-name">个人知识库</span></div><span class="p-desc">自己的抽屉 · 导入 · 提问 · 小练习</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">后面讲</span><span class="p-name">共享知识库</span></div><span class="p-desc">团队公用柜 · 先记下有这个东西</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">知道即可</span><span class="p-name">订阅 / 广场</span></div><span class="p-desc">别人做好的库，可以订来用</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">共享库先放一放。现在目标只有一个：<strong>个人库能问起来。</strong></p>
+</section>
+
+<!-- 13 ima limit -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TEXT ONLY</div>
+  <h2 class="title rise" style="--i:1">IMA 自己：<span class="em">免费，但是只有文字。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">它会</span><span class="live">免费</span></div>
+      <div class="pane-body">
+        <div class="msg u">把这本书导进去，第三章那个概念是什么？</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">文字调用</div>
+          <ul class="steps">
+            <li class="ok">告诉你整本书大概讲什么</li>
+            <li class="ok">抽出概念、数据、表格口径</li>
+            <li class="ok">直接问，直接答</li>
+            <li class="run">打开就能用，不用付费</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">会思考的资料柜 · 文字层面</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">它不会</span></div>
+      <div class="pane-body">
+        <div class="msg u">直接给我做一份培训 PPT</div>
+        <div class="msg b">这不是 IMA 知识库本身的强项。<br>它给得出文字，给不出那份成品。</div>
+        <div class="msg t">夸张的东西：PPT、面板、网站，要接 WorkBuddy。</div>
+      </div>
+      <div class="pane-foot">先会问 · 再会做</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 theory close -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>THEORY DONE</div>
+  <h2 class="quote rise" style="--i:2">理论到这儿。<br>接下来<span class="em">自己的资料进库</span></h2>
+  <p class="quote-2 rise" style="--i:3">云端、不是网盘、IMA、三种库、免费文字调用。下面下载、导入、提问。共享库后面再讲。</p>
+  <div class="end-chips rise" style="--i:4">
+    <span class="chip">本地 ≠ 云端</span>
+    <span class="chip">网盘 ≠ 知识库</span>
+    <span class="chip">今晚练个人库</span>
+  </div>
+</section>
+
+<!-- 15 download -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LAB 01</div>
+  <h2 class="title rise" style="--i:1">实操开始。<span class="em">先把 IMA 下载下来。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">电脑</span><span class="p-name">打开 ima.qq.com 下载客户端</span></div><span class="p-desc">Windows / Mac 都行</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">登录</span><span class="p-name">微信扫码</span></div><span class="p-desc">不用另注册</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">手机备用</span><span class="p-name">微信搜小程序「ima知识库」</span></div><span class="p-desc">跟电脑是同一份库</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">卡住的同学举手。先登进去，再谈导入。</p>
+</section>
+
+<!-- 16 import -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LAB 02</div>
+  <h2 class="title rise" style="--i:1">新建文件夹，<span class="em">把自己的资料导进去。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">建</span><span class="p-name">进个人知识库，新建一个文件夹</span></div><span class="p-desc">用你能认出的名字</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">导</span><span class="p-name">内部文件、PDF、书，丢进去</span></div><span class="p-desc">有内部资料就用内部资料</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">等</span><span class="p-name">等它显示就绪</span></div><span class="p-desc">处理中 = 还不能问</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">先 <strong>3 到 5 份</strong> 就够。不要一上来搬整个网盘。</p>
+</section>
+
+<!-- 17 ask -->
+<section class="slide" id="slide-17">
+  <div class="bg-num">17</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LAB 03</div>
+  <h2 class="title rise" style="--i:1">进这个文件夹，<span class="em">开始问。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">问</div>
+      <div class="feat-lt">点进文件夹再问，<em>别在门口乱喊</em></div>
+      <p class="feat-ld">这就是调用。库是你的，问题是你的，答案从你刚导的资料里来。</p>
+      <span class="cloud-pill"><i class="pdot"></i>这就是个人知识库的使用</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>问结构</h3><p>「这份资料大概讲什么？给我一个提纲。」</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>问概念</h3><p>「里面的 XX 是什么意思？用大白话。」</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>问口径</h3><p>「按这份制度，这种情况怎么处理？」</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>问数据</h3><p>「表格里这个数字是怎么来的？」</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 exercise -->
+<section class="slide" id="slide-18">
+  <div class="bg-num">18</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>SMALL DRILL</div>
+  <h2 class="title rise" style="--i:1">小练习。<span class="em">现在就做。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">导</span><span class="p-name">至少 3 份自己的资料进个人库</span></div><span class="p-desc">书 / 制度 / 内部文件 / PDF</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">问</span><span class="p-name">问一句「这份东西讲什么」</span></div><span class="p-desc">看它能不能从你的材料里答</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">再问</span><span class="p-name">追问一个具体概念或口径</span></div><span class="p-desc">表格、数字、某条规定都可以</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">做完的同学：你会发现它很能说，但给不出一份 PPT。这是下一页要钉的。</p>
+</section>
+
+<!-- 19 only text -->
+<section class="slide" id="slide-19">
+  <div class="bg-num">19</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>THE LIMIT</div>
+  <h2 class="title rise" style="--i:1">你会发现：<span class="em">到这儿，只是文字调用。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">止</div>
+      <div class="feat-lt">数据、表格、概念，<em>它能告诉你</em></div>
+      <p class="feat-ld">这就是个人知识库今晚要练会的全部。能问起来，就算过关。做不出培训课件、数据面板，不是你不会，是 IMA 知识库本身停在文字层。</p>
+      <span class="cloud-pill"><i class="pdot"></i>先接受这个边界</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>已经会了</h3><p>导入、建文件夹、对着自己的资料提问。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>还不会</h3><p>让它直接吐出 PPT、网站、面板。那是下一步。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>共享库</h3><p>团队一起用，放到后面讲。今晚不展开。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>要出活</h3><p>把 WorkBuddy 接到 IMA 上。大脑有了，再装手脚。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 why connect -->
+<section class="slide" id="slide-20">
+  <div class="bg-num">20</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NEXT · CONNECT</div>
+  <h2 class="title rise" style="--i:1">所以下一步：<span class="em">WorkBuddy 接上 IMA。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">只在 IMA 里问</span></div>
+      <div class="pane-body">
+        <div class="msg u">按这份制度，新人第一周学什么？</div>
+        <div class="msg b">根据手册……（一段文字）</div>
+        <div class="msg t">答案有了。课件还得你自己做。</div>
+      </div>
+      <div class="pane-foot">免费 · 文字 · 停在这里</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">出活</span></div>
+      <div class="pane-body">
+        <div class="msg u">勾选这个知识库，做成培训 PPT</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">同一微信授权</div>
+          <ul class="steps">
+            <li class="ok">连接器挂上 IMA</li>
+            <li class="ok">任务里勾你刚建的库</li>
+            <li class="ok">它去读库、去干活</li>
+            <li class="run">这才出得了成品</li>
+          </ul>
+          <div class="dlv"><span class="file">培训.pptx</span></div>
+        </div>
+      </div>
+      <div class="pane-foot wb">IMA 是大脑 · WorkBuddy 是手脚</div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 connect steps -->
+<section class="slide" id="slide-21">
+  <div class="bg-num">21</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>HOW TO CONNECT</div>
+  <h2 class="title rise" style="--i:1">连接就三步。<span class="em">微信必须是同一个。</span></h2>
+  <div class="path rise" style="--i:2">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">打开</span><span class="p-name">WorkBuddy 里找 IMA 知识库</span></div><span class="p-desc">资料库 / 连接器</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">授权</span><span class="p-name">微信扫码，确认权限</span></div><span class="p-desc">跟 IMA 登录的是同一个号</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">勾库</span><span class="p-name">任务里勾选刚才那个文件夹</span></div><span class="p-desc">整库或几份文件都可以</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:3">号不一致：授权成功，库是空的。先对一下微信。</p>
+</section>
+
+<!-- 22 shared later -->
+<section class="slide" id="slide-22">
+  <div class="bg-num">22</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>LATER</div>
+  <h2 class="title rise" style="--i:1">共享知识库，<span class="em">放到后面再讲。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">后</div>
+      <div class="feat-lt">先会自己用，<em>再考虑一起用</em></div>
+      <p class="feat-ld">共享库是团队的公用柜：同事一起问、一起补资料。今晚目标不是这个。个人库能问起来，就已经值回这一堂。</p>
+      <span class="cloud-pill"><i class="pdot"></i>订阅广场：别人做好的库，知道有就行</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>今晚过关</h3><p>个人库里有自己的资料，问两句能答到点子上。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>后面再讲</h3><p>共享权限、邀请同事、别把合同发到广场。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>想出成品</h3><p>连接 WorkBuddy。大脑接上手脚，再做 PPT。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>先不要贪</h3><p>三种库一次讲透，课会散。今晚只钉个人调用。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 23 close -->
+<section class="slide" id="slide-23">
+  <div class="bg-num">23</div>
+  <img class="end-cat rise" style="--i:0" src="ref/wb-icon.svg" alt="WorkBuddy">
+  <div class="kicker rise" style="--i:1"><span class="gt">&gt;</span>YOUR MOVE</div>
+  <h2 class="quote rise" style="--i:2">先会问，<br>再考虑<span class="em">做出东西</span></h2>
+  <p class="quote-2 rise" style="--i:3">今晚：下载 IMA，建个人库，导 3 份自己的资料，问两句。共享库后面讲。要 PPT，再把 WorkBuddy 接上。</p>
+  <button class="cta rise" style="--i:4">现在，把资料导进去<span class="arr">&gt;</span></button>
+  <div class="end-chips rise" style="--i:5">
+    <span class="chip">不是网盘</span>
+    <span class="chip">免费文字调用</span>
+    <span class="chip">个人库小练习</span>
+  </div>
+</section>
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">23</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>

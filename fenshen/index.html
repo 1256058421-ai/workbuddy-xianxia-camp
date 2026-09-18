@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WORKBUDDY · 数字分身</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800;1,900&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0c0b;
+  --panel:rgba(255,255,255,.04);
+  --panel-2:rgba(255,255,255,.06);
+  --line:rgba(255,255,255,.09);
+  --txt:#eef2f0;
+  --txt-2:rgba(238,242,240,.62);
+  --txt-3:rgba(238,242,240,.38);
+  --g1:#01C886;
+  --g2:#0EC8A9;
+  --grad:linear-gradient(120deg,var(--g1),var(--g2));
+  --yellow:#FFE355;
+  --topbar-h:64px;
+  --ctrl-h:64px;
+  --r-card:18px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  color:var(--txt);
+  font-family:"Inter","Noto Sans SC",system-ui,sans-serif;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(900px 500px at 12% -8%, rgba(1,200,134,.13), transparent 60%),
+    radial-gradient(800px 460px at 88% 108%, rgba(14,200,169,.10), transparent 60%),
+    radial-gradient(600px 400px at 50% 50%, rgba(255,255,255,.015), transparent 70%);
+}
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:var(--topbar-h);z-index:50;
+  display:flex;align-items:center;gap:14px;padding:0 28px;
+  border-bottom:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.topbar .cat{width:30px;height:30px;border-radius:8px;display:block;box-shadow:0 4px 14px rgba(1,200,134,.35)}
+.brand-word{
+  font-weight:900;font-style:italic;letter-spacing:.04em;font-size:19px;color:#fff;
+  display:flex;align-items:center;gap:2px;
+}
+.gt{
+  font-weight:900;font-style:italic;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.topbar .divider{width:1px;height:20px;background:var(--line);margin:0 6px}
+.topbar .lesson{
+  font-size:11px;letter-spacing:.22em;color:var(--txt-3);font-weight:600;
+}
+.topbar .spacer{flex:1}
+.fs-btn,.nav-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+  border-radius:10px;cursor:pointer;font-family:inherit;
+  transition:border-color .25s,color .25s,background .25s,transform .15s;
+}
+.fs-btn{height:34px;padding:0 14px;font-size:12px;font-weight:600;letter-spacing:.08em}
+.fs-btn:hover,.nav-btn:hover{border-color:rgba(1,200,134,.6);color:#fff;background:rgba(1,200,134,.08)}
+.fs-btn:active,.nav-btn:active{transform:scale(.94)}
+.fs-btn svg{width:14px;height:14px}
+.slide{
+  position:fixed;inset:0;z-index:1;
+  padding:calc(var(--topbar-h) + 34px) 56px calc(var(--ctrl-h) + 30px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transform:translateY(28px);pointer-events:none;
+  transition:opacity .65s cubic-bezier(.22,1,.36,1),transform .65s cubic-bezier(.22,1,.36,1);
+}
+.slide.active{opacity:1;transform:translateY(0);pointer-events:auto}
+.slide .rise{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+.slide.active .rise{opacity:1;transform:translateY(0);transition-delay:calc(var(--i,0)*85ms + 120ms)}
+.kicker{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:12px;font-weight:700;letter-spacing:.28em;color:var(--txt-3);
+  text-transform:uppercase;margin-bottom:18px;
+}
+.kicker .gt{font-size:14px;letter-spacing:0}
+h2.title{
+  font-size:clamp(30px,4vw,46px);font-weight:900;letter-spacing:.01em;
+  margin-bottom:14px;text-align:center;
+}
+h2.title .em{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.sub{color:var(--txt-2);font-size:16px;text-align:center;max-width:720px;line-height:1.7}
+#slide-1{text-align:center}
+#slide-1 .cover-sub{font-size:clamp(26px,3.2vw,42px);font-weight:900;letter-spacing:.06em}
+.cover-logo{
+  width:104px;height:auto;display:block;margin:0 auto 26px;
+  filter:drop-shadow(0 10px 30px rgba(1,200,134,.30));
+}
+.mega{
+  font-style:italic;font-weight:900;letter-spacing:-.015em;line-height:1;
+  font-size:clamp(60px,10.5vw,148px);color:#f4f7f5;
+  display:flex;align-items:baseline;justify-content:center;gap:18px;
+  text-shadow:
+    1px 1px 0 #0cb37f, 2px 2px 0 #0caa77, 3px 3px 0 #0ba16f,
+    4px 4px 0 #0a9867, 5px 5px 0 #0a8f60, 6px 6px 0 #098659,
+    7px 7px 0 #087d51, 8px 8px 0 #07744a, 9px 9px 0 #076b44,
+    10px 10px 0 #06623d, 11px 11px 0 #055937, 12px 12px 0 #055031,
+    13px 13px 0 #04472b, 14px 14px 0 #043e26,
+    20px 26px 40px rgba(0,0,0,.62),
+    0 0 90px rgba(1,200,134,.22);
+}
+.mega .arrow{
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  font-size:.62em;transform:translateY(-.06em);
+  text-shadow:none;filter:drop-shadow(3px 3px 0 rgba(4,80,54,.9)) drop-shadow(0 0 26px rgba(1,200,134,.4));
+}
+.cover-sub{
+  margin-top:26px;font-size:clamp(20px,2.4vw,30px);font-weight:700;letter-spacing:.02em;
+}
+.cover-sub .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-desc{margin-top:14px;color:var(--txt-2);font-size:15px;line-height:1.8;max-width:680px}
+.chips{display:flex;gap:12px;justify-content:center;margin-top:30px;flex-wrap:wrap}
+.chip{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 18px;border-radius:999px;font-size:13px;font-weight:600;
+  background:var(--panel);border:1px solid var(--line);color:var(--txt-2);
+}
+.chip .gt{font-size:12px}
+.chip.yellow{
+  background:rgba(255,227,85,.10);border-color:rgba(255,227,85,.45);color:var(--yellow);
+}
+.card{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);
+  padding:24px 26px;transition:border-color .3s,background .3s,transform .3s;
+}
+.card:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.slide{overflow:hidden}
+.slide>*:not(.bg-num){position:relative;z-index:1}
+.bg-num{
+  position:absolute;right:-14px;top:50%;transform:translateY(-50%);
+  font:900 italic clamp(190px,24vw,360px)/0.8 "Inter",sans-serif;
+  letter-spacing:-.05em;color:transparent;
+  -webkit-text-stroke:1.5px rgba(1,200,134,.10);
+  pointer-events:none;user-select:none;z-index:0;
+}
+.duo{display:flex;gap:24px;align-items:stretch;width:100%;max-width:1120px;margin-top:32px}
+.pane{flex:1;display:flex;flex-direction:column;border-radius:18px;border:1px solid var(--line);background:var(--panel);overflow:hidden;text-align:left}
+.pane.old{opacity:.75;filter:saturate(.35)}
+.pane.wb{border-color:rgba(1,200,134,.45);background:linear-gradient(180deg,rgba(1,200,134,.09),rgba(255,255,255,.02));box-shadow:0 24px 60px rgba(1,200,134,.10)}
+.pane-bar{display:flex;align-items:center;gap:7px;padding:12px 16px;border-bottom:1px solid var(--line);background:rgba(255,255,255,.025)}
+.pane-bar i.d{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.14)}
+.pane-bar i.d.g{background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.pane-name{margin-left:6px;font-size:12px;font-weight:800;letter-spacing:.16em;color:var(--txt-2)}
+.pane.wb .pane-name{color:#fff}
+.live{margin-left:auto;font-size:11px;font-weight:800;color:var(--g2);display:flex;align-items:center;gap:6px;letter-spacing:.08em}
+.live::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+.pane-body{flex:1;padding:18px;display:flex;flex-direction:column;gap:11px}
+.msg{max-width:88%;padding:10px 15px;border-radius:13px;font-size:13.5px;line-height:1.65}
+.msg.u{align-self:flex-end;background:rgba(255,255,255,.08)}
+.pane.wb .msg.u{background:var(--grad);color:#04110b;font-weight:600}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.045);border:1px solid var(--line);color:var(--txt-2)}
+.msg.t{align-self:flex-start;font-size:12px;color:var(--txt-3);padding:0 2px}
+.task{border:1px solid rgba(1,200,134,.35);border-radius:13px;background:rgba(1,200,134,.05);padding:14px 16px}
+.task-h{font-size:13px;font-weight:800;color:var(--g2);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.task-h img{width:18px;height:18px;border-radius:5px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:7px}
+.steps li{position:relative;padding-left:21px;font-size:13px;color:var(--txt-2)}
+.steps li::before{content:"";position:absolute;left:0;top:3.5px;width:12px;height:12px;border-radius:50%;border:1.5px solid var(--txt-3)}
+.steps li.ok{color:var(--txt)}
+.steps li.ok::before{background:var(--grad);border-color:transparent}
+.steps li.ok::after{content:"✓";position:absolute;left:2.6px;top:3px;font-size:9px;line-height:1.2;font-weight:900;color:#04110b}
+.steps li.run{color:var(--g2);font-weight:600}
+.steps li.run::before{border-color:var(--g2);animation:blink 1.4s infinite}
+.dlv{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.file{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:700;color:var(--g2);background:rgba(1,200,134,.10);border:1px solid rgba(1,200,134,.32);border-radius:8px;padding:5px 11px}
+.file::before{content:"";width:8px;height:10px;border:1.5px solid var(--g2);border-radius:2px;opacity:.85}
+.pane-foot{padding:12px 18px;border-top:1px solid var(--line);font-size:12px;color:var(--txt-3);letter-spacing:.03em}
+.pane-foot.wb{color:var(--g2);font-weight:700}
+.duo-gt{align-self:center;font-size:46px;font-weight:900;font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 22px rgba(1,200,134,.45))}
+.path{width:100%;max-width:1080px;margin-top:28px}
+.p-row{display:flex;align-items:center;gap:24px;padding:14px 18px;border-top:1px solid var(--line);transition:background .3s,padding-left .3s}
+.p-row:last-child{border-bottom:1px solid var(--line)}
+.p-row:hover{background:rgba(1,200,134,.05);padding-left:32px}
+.p-num{min-width:60px;font:900 italic 36px/1 "Inter",sans-serif;color:transparent;-webkit-text-stroke:1.3px rgba(1,200,134,.55);transition:.3s}
+.p-row:hover .p-num{-webkit-text-stroke:0px;color:var(--g2);text-shadow:0 0 22px rgba(1,200,134,.55)}
+.p-main{flex:1;display:flex;align-items:baseline;gap:16px;min-width:0}
+.p-tag{flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:6px;padding:4px 11px}
+.p-name{font-size:19px;font-weight:800}
+.p-desc{font-size:13px;color:var(--txt-2);text-align:right}
+.p-gt{font-size:22px;font-weight:900;font-style:italic;color:var(--txt-3);transition:.3s}
+.p-row:hover .p-gt{color:var(--g2);transform:translateX(5px)}
+.feat{display:flex;gap:20px;width:100%;max-width:1120px;margin-top:24px;align-items:stretch}
+.feat-left{flex:.85;display:flex;flex-direction:column;justify-content:center;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-card);padding:28px 30px;position:relative;overflow:hidden}
+.feat-left::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--grad)}
+.big4{font:900 italic clamp(84px,8.5vw,132px)/0.9 "Inter",sans-serif;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(4px 4px 0 rgba(4,80,54,.55));margin-bottom:10px;width:fit-content}
+.feat-lt{font-size:25px;font-weight:900;margin-bottom:10px}
+.feat-lt em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat-ld{font-size:13.5px;color:var(--txt-2);line-height:1.7;margin-bottom:18px}
+.cloud-pill{display:inline-flex;align-items:center;gap:9px;width:fit-content;font-size:12.5px;font-weight:700;color:var(--g2);border:1px solid rgba(1,200,134,.4);background:rgba(1,200,134,.08);border-radius:999px;padding:9px 16px}
+.pdot{width:8px;height:8px;border-radius:50%;background:var(--g2);box-shadow:0 0 10px var(--g2);animation:blink 1.6s infinite}
+.feat-grid{flex:1.25;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fcard{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 20px 18px;display:flex;flex-direction:column;gap:7px;transition:border-color .3s,background .3s,transform .3s}
+.fcard:hover{border-color:rgba(1,200,134,.55);background:var(--panel-2);transform:translateY(-3px)}
+.fviz{height:42px;display:flex;align-items:center;margin-bottom:2px}
+.vz-para{display:flex;flex-direction:column;gap:5px}
+.vz-para i{display:block;height:6px;border-radius:3px;background:var(--grad)}
+.vz-para i:nth-child(1){width:36px;opacity:.45}
+.vz-para i:nth-child(2){width:62px;opacity:.7}
+.vz-para i:nth-child(3){width:92px}
+.vz-clock{position:relative;width:36px;height:36px;border-radius:50%;border:2px solid rgba(1,200,134,.55)}
+.vz-clock::before,.vz-clock::after{content:"";position:absolute;left:50%;bottom:50%;width:2px;border-radius:2px;background:var(--g2);transform-origin:bottom center}
+.vz-clock::before{height:10px;transform:translateX(-50%)}
+.vz-clock::after{height:14px;transform:translateX(-50%) rotate(118deg)}
+.vz-clock i{position:absolute;left:50%;top:50%;width:4px;height:4px;margin:-2px;border-radius:50%;background:var(--g2)}
+.vz-stack{position:relative;width:66px;height:38px}
+.vz-stack i{position:absolute;left:0;width:54px;height:9px;border-radius:5px;border:1.5px solid rgba(1,200,134,.55);background:rgba(1,200,134,.08)}
+.vz-stack i:nth-child(1){top:0}
+.vz-stack i:nth-child(2){top:13px;left:5px}
+.vz-stack i:nth-child(3){top:26px;left:10px;background:var(--grad);border-color:transparent}
+.vz-signal{position:relative;width:52px;height:42px}
+.vz-signal i{position:absolute;left:3px;bottom:3px;width:7px;height:7px;border-radius:50%;background:var(--g2);box-shadow:0 0 8px var(--g2)}
+.vz-signal::before,.vz-signal::after{content:"";position:absolute;left:6.5px;bottom:6.5px;transform:translate(-50%,50%);border-radius:50%;border:1.5px solid rgba(1,200,134,.45)}
+.vz-signal::before{width:24px;height:24px}
+.vz-signal::after{width:42px;height:42px;border-color:rgba(1,200,134,.22)}
+.fcard h3{font-size:16px;font-weight:800}
+.fcard p{font-size:12.5px;color:var(--txt-2);line-height:1.65}
+.eco-strip{width:100%;max-width:1120px;margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:13px 20px}
+.eco-label{font-size:13px;font-weight:800;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.eco-chips{display:flex;flex-wrap:wrap;gap:8px}
+.eco-chip{
+  font-size:12px;font-weight:600;color:var(--txt-2);
+  background:rgba(255,255,255,.05);border:1px solid var(--line);
+  padding:6px 13px;border-radius:999px;transition:border-color .25s,color .25s;
+}
+.eco-chip:hover{border-color:rgba(1,200,134,.5);color:#fff}
+.end-cat{width:56px;height:56px;border-radius:15px;box-shadow:0 10px 28px rgba(1,200,134,.35);margin:0 auto 22px;display:block}
+.quote{
+  font-size:clamp(30px,4.4vw,54px);font-weight:900;line-height:1.35;max-width:900px;
+  text-align:center;
+}
+.quote .em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.quote-2{
+  margin-top:18px;font-size:17px;color:var(--txt-2);line-height:1.8;max-width:680px;text-align:center;
+}
+.cta{
+  margin-top:38px;display:inline-flex;align-items:center;gap:12px;
+  padding:18px 40px;border-radius:16px;cursor:pointer;border:none;
+  font-family:inherit;font-size:18px;font-weight:800;color:#04110b;
+  background:var(--grad);
+  box-shadow:0 12px 40px rgba(1,200,134,.35),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:transform .25s,box-shadow .25s;
+}
+.cta:hover{transform:translateY(-3px);box-shadow:0 18px 50px rgba(1,200,134,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.cta .arr{font-weight:900;font-style:italic}
+.end-chips{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.ctrl{
+  position:fixed;left:0;right:0;bottom:0;height:var(--ctrl-h);z-index:50;
+  display:flex;align-items:center;gap:18px;padding:0 28px;
+  border-top:1px solid var(--line);
+  background:rgba(10,12,11,.72);backdrop-filter:blur(14px);
+}
+.pageno{
+  font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--txt-2);
+  font-variant-numeric:tabular-nums;min-width:64px;
+}
+.pageno b{color:#fff;font-weight:800}
+.progress{
+  flex:1;height:4px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden;
+}
+.progress .fill{
+  height:100%;width:5.26%;border-radius:99px;background:var(--grad);
+  box-shadow:0 0 12px rgba(1,200,134,.6);
+  transition:width .55s cubic-bezier(.22,1,.36,1);
+}
+.hint{font-size:11.5px;color:var(--txt-3);letter-spacing:.06em;white-space:nowrap}
+.hint kbd{
+  font-family:inherit;font-size:10.5px;color:var(--txt-2);
+  border:1px solid var(--line);border-radius:5px;padding:2px 6px;background:var(--panel);
+}
+.nav-btn{height:34px;width:44px;font-size:15px;font-weight:800}
+.nav-btn.next{
+  background:var(--grad);border:none;color:#04110b;
+  box-shadow:0 6px 20px rgba(1,200,134,.3);
+}
+.nav-btn.next:hover{background:var(--grad);color:#04110b;filter:brightness(1.08)}
+.xgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:1120px;margin-top:22px}
+.xgrid .fcard{min-height:148px}
+.note-bar{margin-top:16px;font-size:14px;color:var(--txt-2);text-align:center;max-width:860px;line-height:1.7}
+.note-bar b{color:var(--g2)}
+.path.tight .p-row{padding:8px 16px}
+.path.tight .p-num{font-size:28px;min-width:48px}
+.path.tight .p-name{font-size:16px}
+.path.tight .p-desc{font-size:12.5px}
+.cmd{
+  width:100%;max-width:920px;margin-top:22px;text-align:left;
+  background:rgba(1,200,134,.06);border:1px solid rgba(1,200,134,.28);
+  border-radius:16px;padding:18px 22px;
+}
+.cmd .cmd-k{font-size:11px;font-weight:800;letter-spacing:.18em;color:var(--g2);margin-bottom:8px}
+.cmd p{font-size:16px;line-height:1.8;color:var(--txt);font-weight:600}
+.cmd .dim{color:var(--txt-2);font-weight:500;font-size:14px;margin-top:8px;line-height:1.7}
+.fab{
+  display:inline-flex;align-items:center;gap:8px;
+  margin-top:8px;align-self:flex-end;
+  padding:9px 16px;border-radius:999px;
+  background:var(--grad);color:#04110b;font-size:13px;font-weight:800;
+  box-shadow:0 8px 20px rgba(1,200,134,.32);
+}
+.prompt-pack{
+  width:100%;max-width:1080px;margin-top:16px;
+  display:flex;flex-direction:column;gap:12px;text-align:left;
+}
+.prompt-card{
+  background:rgba(1,200,134,.06);border:1px solid rgba(1,200,134,.28);
+  border-radius:16px;padding:14px 18px 16px;
+}
+.prompt-card .pk{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:800;letter-spacing:.16em;color:var(--g2);margin-bottom:8px;
+}
+.prompt-card .pk .n{
+  font:900 italic 18px/1 "Inter",sans-serif;letter-spacing:0;
+  color:transparent;-webkit-text-stroke:1px rgba(1,200,134,.7);
+}
+.prompt-card p{font-size:13.5px;line-height:1.7;color:var(--txt);font-weight:500}
+#slide-16 h2.title{font-size:clamp(26px,3.4vw,38px);margin-bottom:6px}
+@media (max-width:900px){
+  .slide{padding:calc(var(--topbar-h) + 22px) 22px calc(var(--ctrl-h) + 20px)}
+  .duo{flex-direction:column}
+  .duo-gt{transform:rotate(90deg)}
+  .p-desc{display:none}
+  .p-num{min-width:44px;font-size:26px}
+  .feat{flex-direction:column}
+  .feat-grid,.xgrid{grid-template-columns:1fr 1fr}
+  .bg-num{font-size:190px}
+  .hint{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <svg class="cat" viewBox="0 0 130 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_283_481)">
+      <rect width="130" height="130" rx="28.0526" fill="url(#paint0_linear_283_481)"/>
+      <g filter="url(#filter0_f_283_481)">
+        <circle cx="108.36" cy="141.759" r="41.8289" fill="#FFE355" fill-opacity="0.49"/>
+      </g>
+      <path fill-rule="evenodd" clip-rule="evenodd" d="M99.4282 10.1638C100.703 9.02064 100.78 8.97669 101.714 8.92058C103.229 8.80992 104.616 9.53654 106.977 11.6861C112.493 16.6987 120.175 27.0043 124.95 35.8049L126.795 39.2201L129.401 40.5162C131.917 41.7875 136.044 44.394 137.767 45.7919C138.547 46.4365 138.657 46.4497 139.467 46.1344C143.125 44.7098 148.365 46.5984 152.987 51.0325C157.148 55.0201 161.133 61.833 162.659 67.5195C162.882 68.4346 163.178 70.4028 163.286 71.8681C163.634 77.013 161.984 81.1226 158.806 82.9826C158.158 83.3572 158.115 83.4591 158.133 85.0776C158.279 92.7829 156.202 100.474 152.03 107.974C147.32 116.396 138.933 125.107 127.583 133.315C121.488 137.751 107.067 146.153 100.547 149.102C84.9287 156.134 72.4081 158.831 61.5321 157.498C55.0448 156.712 47.7017 154.18 43.357 151.241C42.2133 150.45 42.0324 150.402 41.1585 150.652C36.5074 151.988 30.4158 149.242 25.241 143.498C23.177 141.202 19.8464 135.564 18.7664 132.547C16.2684 125.487 16.7648 119.115 20.0922 115.31C20.952 114.33 20.9796 114.289 20.7918 112.641C20.4817 109.943 20.3406 105.951 20.4823 103.375L20.5947 100.968L16.9813 94.5763C11.3858 84.6202 7.8314 76.2603 6.46025 69.8729C5.7364 66.3704 5.78144 64.8166 6.67051 63.6668C7.21161 62.9725 8.98625 62.2531 11.1257 61.858C16.5115 60.9125 28.2577 61.7685 41.3255 64.0757L42.6832 64.3101L45.6662 61.6722C50.6181 57.2859 53.9074 54.8262 59.9722 51.0446C66.2933 47.0897 73.4271 43.8362 81.4607 41.26L84.0384 40.4337L85.4554 36.7142C90.5286 23.3221 95.7238 13.4483 99.4282 10.1638ZM56.9346 78.7893C51.2012 82.0995 48.3345 83.7553 46.228 85.6101C37.6975 93.1218 34.5094 105.02 38.1411 115.791C39.038 118.45 40.6927 121.318 44.0029 127.051C47.3132 132.785 48.9688 135.651 50.8238 137.758C58.3355 146.288 70.2338 149.476 81.0044 145.845C83.664 144.948 86.5308 143.292 92.2642 139.982L125.248 120.939C130.981 117.629 133.848 115.974 135.955 114.119C144.485 106.607 147.673 94.7089 144.042 83.9384C143.145 81.2787 141.489 78.412 138.179 72.6785C134.869 66.9451 133.214 64.078 131.359 61.9714C123.847 53.4409 111.949 50.2528 101.178 53.8845C98.5186 54.7814 95.6515 56.4361 89.918 59.7463L56.9346 78.7893Z" fill="url(#paint1_linear_283_481)"/>
+      <rect x="60.1133" y="101.836" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 60.1133 101.836)" fill="white"/>
+      <rect x="95.2666" y="81.54" width="13.0294" height="27.061" rx="6.51468" transform="rotate(-30 95.2666 81.54)" fill="white"/>
+    </g>
+    <defs>
+      <filter id="filter0_f_283_481" x="30.78" y="64.179" width="155.161" height="155.16" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+        <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+        <feGaussianBlur stdDeviation="17.8756" result="effect1_foregroundBlur_283_481"/>
+      </filter>
+      <linearGradient id="paint0_linear_283_481" x1="65" y1="0" x2="65" y2="130" gradientUnits="userSpaceOnUse">
+        <stop stop-color="#0EC8A9"/>
+        <stop offset="1" stop-color="#01C886"/>
+      </linearGradient>
+      <linearGradient id="paint1_linear_283_481" x1="54.1591" y1="36.0036" x2="114.973" y2="141.337" gradientUnits="userSpaceOnUse">
+        <stop stop-color="white" stop-opacity="0.8"/>
+        <stop offset="0.437689" stop-color="white"/>
+      </linearGradient>
+      <clipPath id="clip0_283_481">
+        <rect width="130" height="130" rx="28.0526" fill="white"/>
+      </clipPath>
+    </defs>
+  </svg>
+  <div class="brand-word">WORK&nbsp;BUDDY<span class="gt">&gt;</span></div>
+  <div class="divider"></div>
+  <div class="lesson">LESSON_04 / 数字分身</div>
+  <div class="spacer"></div>
+  <button class="fs-btn" id="fsBtn" title="全屏 (F)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    全屏
+  </button>
+</header>
+
+<!-- 01 cover -->
+<section class="slide active" id="slide-1">
+  <img class="cover-logo rise" style="--i:0" src="ref/wb-logo.png" alt="WorkBuddy logo">
+  <h1 class="mega rise" style="--i:1">WORKBUDDY<span class="arrow">&gt;</span></h1>
+  <div class="cover-sub rise" style="--i:2">数字<span class="em">分身</span></div>
+  <p class="cover-desc rise" style="--i:3">把你过往的知识、经验和资料装进去，让 AI 按你的语气回答。客户打开就能用。</p>
+  <div class="chips rise" style="--i:4">
+    <span class="chip yellow">咨询 · 课程 · 服务</span>
+    <span class="chip"><span class="gt">&gt;</span>两条路</span>
+    <span class="chip"><span class="gt">&gt;</span>共享库免费</span>
+    <span class="chip"><span class="gt">&gt;</span>网站要 API</span>
+  </div>
+</section>
+
+<!-- 02 衔接 -->
+<section class="slide" id="slide-2">
+  <div class="bg-num">02</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>NEXT METHOD</div>
+  <h2 class="title rise" style="--i:1">刚才是介绍自己。<span class="em">现在让客户来问你。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane old">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">个人介绍网站</span></div>
+      <div class="pane-body">
+        <div class="msg u">帮我做一页介绍：我是谁、做什么、怎么找我</div>
+        <div class="msg b">这是你的介绍页。别人打开，是在看你。</div>
+        <div class="msg t">介绍页能信任你。但客户有问题的时候，还是要等你亲自回。</div>
+      </div>
+      <div class="pane-foot">给人看 · 你不在，就问不成</div>
+    </div>
+    <div class="duo-gt">&gt;</div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">数字分身</span><span class="live">能对话</span></div>
+      <div class="pane-body">
+        <div class="msg u">客户问：这种情况我该怎么办？</div>
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">用你的资料回答，口气像你</div>
+          <ul class="steps">
+            <li class="ok">过往课程、咨询、案例，事先装进去</li>
+            <li class="ok">回答只基于这些资料</li>
+            <li class="run">语气、口吻尽量像你平时讲话</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">给人用 · 你不在，也能先答一轮</div>
+    </div>
+  </div>
+</section>
+
+<!-- 03 谁适合 -->
+<section class="slide" id="slide-3">
+  <div class="bg-num">03</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHO IT'S FOR</div>
+  <h2 class="title rise" style="--i:1">台下很多朋友，<span class="em">就是做这件事的。</span></h2>
+  <div class="xgrid rise" style="--i:1">
+    <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>做咨询的</h3><p>客户常问的那一类问题，分身可以先答。真正要深聊的，再约你。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>做课程的</h3><p>讲过的课、发过的讲义，装进去。学员课后还能按你的口径来问。</p></div>
+    <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>做服务的</h3><p>服务说明、常见问题、注意事项，客户随时能问到，不用你一条条打字。</p></div>
+  </div>
+  <p class="note-bar rise" style="--i:2">做内容的也一样。<b>你有一套自己的方法，就值得做成数字分身。</b></p>
+</section>
+
+<!-- 04 它是什么 -->
+<section class="slide" id="slide-4">
+  <div class="bg-num">04</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT IT IS</div>
+  <h2 class="title rise" style="--i:1">三样东西叠在一起，<span class="em">才叫数字分身。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">3</div>
+      <div class="feat-lt">资料 · 语气 · <em>给客户用</em></div>
+      <p class="feat-ld">少任何一样都不算。没有资料，它只会泛泛而谈。没有语气，客户觉得不像你。不给客户用，就只是你自己玩。</p>
+      <span class="cloud-pill"><i class="pdot"></i>它代替不了你本人，先帮你答一轮</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>你的资料</h3><p>讲课、咨询记录、方案、问答、案例。过往经验全部打包进去。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>你的语气</h3><p>怎么称呼人、怎么收尾、什么能说、什么不说。要写清楚。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>客户能打开</h3><p>分享出去就能问。不是只在你电脑上跑的演示。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>不是普通聊天</h3><p>普通 AI 什么都懂，不懂你的方法。分身只调用你给的那些资料。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 05 受欢迎吗 -->
+<section class="slide" id="slide-5">
+  <div class="bg-num">05</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHY PEOPLE PAY</div>
+  <h2 class="quote rise" style="--i:1">客户半夜想到一个问题，<br>也能先得到<span class="em">像你的回答</span></h2>
+  <p class="quote-2 rise" style="--i:2">你一个人接待不过来。分身用你的口径先答，真要深聊再约你。做咨询、做课、做服务，这一层都缺。</p>
+  <div class="chips rise" style="--i:3">
+    <span class="chip"><span class="gt">&gt;</span>你不在也能问</span>
+    <span class="chip"><span class="gt">&gt;</span>口径统一</span>
+    <span class="chip yellow">可以单独卖，也可以当服务附赠</span>
+  </div>
+</section>
+
+<!-- 06 案例 -->
+<section class="slide" id="slide-6">
+  <div class="bg-num">06</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>A REAL CASE</div>
+  <h2 class="title rise" style="--i:1">心理学老师做过。<span class="em">一份 399 元。</span></h2>
+  <div class="feat rise" style="--i:2">
+    <div class="feat-left">
+      <div class="big4">399</div>
+      <div class="feat-lt">卖了 <em>5000 多份</em></div>
+      <p class="feat-ld">把过往讲课资料全部导入，做成自己的智能分身。客户付钱，就能用这个分身来问。课上可以说出这位老师的名字。</p>
+      <span class="cloud-pill"><i class="pdot"></i>399 × 5000，接近 200 万</span>
+    </div>
+    <div class="feat-grid">
+      <div class="fcard"><div class="fviz"><span class="vz-stack"><i></i><i></i><i></i></span></div><h3>装进去的是课</h3><p>不是凭空聊天。是他讲过的内容，AI 按这些来答。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-signal"><i></i></span></div><h3>卖的是分身</h3><p>客户买到的是「随时能问到他的方法」，不是再买一节课。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-clock"><i></i></span></div><h3>你也可以这样做</h3><p>咨询、课程、服务，逻辑一样：资料在你这儿，分身卖给需要的人。</p></div>
+      <div class="fcard"><div class="fviz"><span class="vz-para"><i></i><i></i><i></i></span></div><h3>先别想着对标 200 万</h3><p>先做出来，给自己的客户用。卖不卖、怎么定价，后面再定。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 07 要装什么 -->
+<section class="slide" id="slide-7">
+  <div class="bg-num">07</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHAT TO PACK</div>
+  <h2 class="title rise" style="--i:1">分身空不空，<span class="em">看你装进去什么。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">方法</span><span class="p-name">课程、讲义、你自己的框架</span></div><span class="p-desc">这是分身的骨头</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">问答</span><span class="p-name">客户最常问的 20 个问题，和你的回答</span></div><span class="p-desc">这是分身的肌肉</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">案例</span><span class="p-name">你处理过的典型情况（去掉隐私）</span></div><span class="p-desc">让回答落地</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">语气</span><span class="p-name">几段你自己写的回复，作为样子</span></div><span class="p-desc">称呼、收尾、口头禅</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">05</span><div class="p-main"><span class="p-tag">边界</span><span class="p-name">什么不能答、什么必须约本人</span></div><span class="p-desc">咨询尤其重要</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:2">不该给客户看的内部资料，<b>不要装进去。</b></p>
+</section>
+
+<!-- 08 两条路 -->
+<section class="slide" id="slide-8">
+  <div class="bg-num">08</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TWO ROUTES</div>
+  <h2 class="title rise" style="--i:1">两条路。<span class="em">一条免费，一条要花钱。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">方法一 · IMA 共享知识库</span><span class="live">免费</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">资料放进共享库，把库分享给别人</div>
+          <ul class="steps">
+            <li class="ok">别人打开就能问</li>
+            <li class="ok">调用本身不另外收费</li>
+            <li>形态还是知识库，不是独立网站</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot wb">先练这条 · 今晚就能给客户试</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">方法二 · 个人网站加小助手</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">在已经做好的介绍网站上，加问答窗口</div>
+          <ul class="steps">
+            <li class="ok">点开就能问，根据网站内容回答</li>
+            <li>要接入 DeepSeek，需要 API Key</li>
+            <li>今晚现场就练这条</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot">接入 DeepSeek · 密钥不要投影</div>
+    </div>
+  </div>
+</section>
+
+<!-- 09 怎么选 -->
+<section class="slide" id="slide-9">
+  <div class="bg-num">09</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>WHICH WAY</div>
+  <h2 class="title rise" style="--i:1">怎么选。<span class="em">先问自己给谁用。</span></h2>
+  <div class="path tight rise" style="--i:1">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">共享库</span><span class="p-name">先给少数客户试、先验证好不好用</span></div><span class="p-desc">免费 · 今晚就能做</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">小助手</span><span class="p-name">在个人介绍网站上加问答分身，接入 DeepSeek</span></div><span class="p-desc">要 API · 今晚练</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">注册登录</span><span class="p-name">要对外卖、要管用户、要收钱</span></div><span class="p-desc">找助教 · 今晚不讲</span><span class="p-gt">&gt;</span></div>
+  </div>
+  <p class="note-bar rise" style="--i:2">建议：<b>先共享库跑通，再在个人网站上加小助手。</b>网站本身没有内容，分身也是空的。</p>
+</section>
+
+<!-- 10 方法一 概念 -->
+<section class="slide" id="slide-10">
+  <div class="bg-num">10</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>ROUTE 01</div>
+  <h2 class="title rise" style="--i:1">方法一：<span class="em">IMA 共享知识库。</span></h2>
+  <p class="sub rise" style="--i:2">不是订阅广场。是你自己建一个库，邀请别人进来问。</p>
+  <div class="path tight rise" style="--i:3">
+    <div class="p-row"><span class="p-num">01</span><div class="p-main"><span class="p-tag">建</span><span class="p-name">新建共享知识库，只放可以给客户看的资料</span></div><span class="p-desc">内部文件不要放</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">02</span><div class="p-main"><span class="p-tag">写</span><span class="p-name">加一份「我是谁、怎么回答、什么不答」</span></div><span class="p-desc">语气从这里来</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">03</span><div class="p-main"><span class="p-tag">分享</span><span class="p-name">把这个库分享给客户或学员</span></div><span class="p-desc">他们就能直接问</span><span class="p-gt">&gt;</span></div>
+    <div class="p-row"><span class="p-num">04</span><div class="p-main"><span class="p-tag">费用</span><span class="p-name">对方调用，不另外向你收费</span></div><span class="p-desc">适合先试用</span><span class="p-gt">&gt;</span></div>
+  </div>
+</section>
+
+<!-- 11 方法一 对话框 -->
+<section class="slide" id="slide-11">
+  <div class="bg-num">11</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>ROUTE 01 · PROMPT</div>
+  <h2 class="title rise" style="--i:1">共享库做好了，<span class="em">对话框里这样说。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">提示词</span></div>
+      <div class="pane-body">
+        <div class="msg u">读取我的共享知识库「【你的名字】数字分身」。请根据库里的资料，写一份给客户看的使用说明：这个分身能问什么、不能问什么、回答会像我平时讲话。语气要求也写进去：称呼、收尾、不夸大、不确定就让客户来找我本人。</div>
+        <div class="msg t">先让它读库、写规则。规则清楚了，再分享给别人。</div>
+      </div>
+      <div class="pane-foot wb">复制到对话框 · 把【你的名字】换成自己</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">客户那边会怎样</span></div>
+      <div class="pane-body">
+        <div class="msg b">打开你分享的库，直接提问。</div>
+        <div class="msg u">老师，我这种情况适合报名吗？</div>
+        <div class="msg b">按你库里的口径回答。超出范围，会请对方联系你本人。</div>
+        <div class="msg t">你自己先问 10 个客户常问的问题。答得不像，就补资料、补语气。</div>
+      </div>
+      <div class="pane-foot">自己测过，再发给客户</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 今晚练习 -->
+<section class="slide" id="slide-12">
+  <div class="bg-num">12</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>TONIGHT'S DRILL</div>
+  <h2 class="title rise" style="--i:1">今晚练习：在个人网站上，<span class="em">加一个小助手。</span></h2>
+  <p class="sub rise" style="--i:2">不另做网站。就用你已经做好的个人介绍页。这一点开，就是问答分身。</p>
+  <div class="duo rise" style="--i:3">
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">上一节 · 个人介绍网站</span></div>
+      <div class="pane-body">
+        <div class="msg b">我是谁、帮谁、怎么找到我。</div>
+        <div class="msg b">客户来了，只能自己往下翻。</div>
+        <div class="msg t">网站做好了，还差一件事：让人能问。</div>
+      </div>
+      <div class="pane-foot">先有介绍页，再加分身</div>
+    </div>
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">今晚 · 加上小助手</span><span class="live">数字分身</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">点开就能问</div>
+          <ul class="steps">
+            <li class="ok">根据这个网站里的全部信息回答</li>
+            <li class="ok">网站上没写的，不要自己编</li>
+            <li class="run">接入 DeepSeek API，当场能对话</li>
+          </ul>
+        </div>
+        <span class="fab">问我 ▸</span>
+      </div>
+      <div class="pane-foot wb">这一步，就叫数字分身</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 第1步 规划 -->
+<section class="slide" id="slide-13">
+  <div class="bg-num">13</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 01 · PLAN</div>
+  <h2 class="title rise" style="--i:1">第 1 步：<span class="em">先让 WorkBuddy 规划清楚。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">提示词</span></div>
+      <div class="pane-body">
+        <div class="msg u">我打算把 DeepSeek 做成一个小助手，加在我已经做好的个人介绍网站上。这个小助手一点开，就是问答分身：根据这个网站里的全部信息回答，网站上没有的不要编。我会把 DeepSeek 的 API Key 给你。请先把整件事规划清楚：小助手放哪、点开后怎么对话、欢迎语、回答规则、怎么接入这个 API。这一步只出规划，先不要动手改网站。</div>
+        <div class="msg t">Key 有就一起贴进去。完整密钥不要打在投影上。</div>
+      </div>
+      <div class="pane-foot wb">先计划 · 计划你点头了，再搭建</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">规划里必须有</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">你要看到这几项</div>
+          <ul class="steps">
+            <li class="ok">入口：小助手按钮放在网站哪里</li>
+            <li class="ok">对话：点开后长什么样、欢迎语说什么</li>
+            <li class="ok">规则：只根据网站内容答，没有的不编</li>
+            <li class="run">接入：怎么用你的 DeepSeek API Key</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot">缺一项，让它把规划补全</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 第2步 搭建 -->
+<section class="slide" id="slide-14">
+  <div class="bg-num">14</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>STEP 02 · BUILD</div>
+  <h2 class="title rise" style="--i:1">第 2 步：<span class="em">规划过了，直接搭出来。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">WORKBUDDY</span><span class="live">提示词</span></div>
+      <div class="pane-body">
+        <div class="msg u">规划我认可了。这是我的 DeepSeek API Key：（在自己电脑上粘贴，不要投影）。请按刚才的规划，直接在这个个人介绍网站上把小助手搭出来。接入 DeepSeek API，打开网站就能点开小助手提问，并得到基于网站全部信息的回答。先出可以打开的网页文件。</div>
+        <div class="msg t">Key 去 DeepSeek 开放平台创建。只贴在你自己的对话框里。</div>
+      </div>
+      <div class="pane-foot wb">现场操作 · 完整密钥不要出现在大屏幕上</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">搭的时候记住</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">不是另做一个网站</div>
+          <ul class="steps">
+            <li class="ok">改的是你已经做好的个人介绍页</li>
+            <li class="ok">加一个能点开的小助手</li>
+            <li class="ok">回答必须来自这个网站上的信息</li>
+            <li class="run">密钥会花钱，不要发群、不要外传</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot">网页能打开，就进入验收</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 完成标准 -->
+<section class="slide" id="slide-15">
+  <div class="bg-num">15</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>DONE WHEN</div>
+  <h2 class="title rise" style="--i:1">完成一轮对话，<span class="em">就算过关。</span></h2>
+  <div class="duo rise" style="--i:2">
+    <div class="pane wb">
+      <div class="pane-bar"><i class="d g"></i><i class="d"></i><i class="d"></i><span class="pane-name">小助手 · 现场验收</span><span class="live">问一句</span></div>
+      <div class="pane-body">
+        <div class="msg b">你好，我是这个网站上的小助手。你想了解什么，直接问我。</div>
+        <div class="msg u">你主要帮谁？怎么开始合作？</div>
+        <div class="msg b">按网站里写的来答。介绍、服务对象、合作方式，都能问到。</div>
+        <div class="msg t">问的是网站上有的事，它能答上来，任务就完成。</div>
+      </div>
+      <div class="pane-foot wb">打开网站 → 点开小助手 → 问一句 → 它答了</div>
+    </div>
+    <div class="pane">
+      <div class="pane-bar"><i class="d"></i><i class="d"></i><i class="d"></i><span class="pane-name">过关就这三下</span></div>
+      <div class="pane-body">
+        <div class="task">
+          <div class="task-h"><img src="ref/wb-icon.svg" alt="">自己先当客户问</div>
+          <ul class="steps">
+            <li class="ok">网站右下角（或一处明显位置）能点开小助手</li>
+            <li class="ok">问一句网站里写过的，它能根据页面回答</li>
+            <li class="run">答上来了，今晚这条练习就算完成</li>
+          </ul>
+        </div>
+      </div>
+      <div class="pane-foot">答不上来，回到第 2 步让它改</div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 整串提示词 -->
+<section class="slide" id="slide-16">
+  <div class="bg-num">16</div>
+  <div class="kicker rise" style="--i:0"><span class="gt">&gt;</span>COPY THIS</div>
+  <h2 class="title rise" style="--i:1">两段提示词，<span class="em">整串复制。</span></h2>
+  <p class="sub rise" style="--i:1">先发第一段等规划。规划点头了，再发第二段。Key 只在自己电脑粘贴。</p>
+  <div class="prompt-pack rise" style="--i:2">
+    <div class="prompt-card">
+      <div class="pk"><span class="n">01</span>第 1 步 · 规划</div>
+      <p>我打算把 DeepSeek 做成一个小助手，加在我已经做好的个人介绍网站上。这个小助手一点开，就是问答分身：根据这个网站里的全部信息回答问题，网站上没有写的不要自己编。我会把 DeepSeek 的 API Key 给你，用来接入。请先帮我把整件事规划清楚：小助手入口放在网站哪里、点开后对话长什么样、欢迎语说什么、回答规则是什么、怎么用这个 API Key 接入 DeepSeek。这一步只出规划，先不要动手改网站。</p>
+    </div>
+    <div class="prompt-card">
+      <div class="pk"><span class="n">02</span>第 2 步 · 搭建</div>
+      <p>规划我认可了。这是我的 DeepSeek API Key：【在这里粘贴，不要投影】。请按刚才的规划，直接在这个个人介绍网站上把小助手搭出来。接入 DeepSeek API，打开网站就能点开小助手提问，并得到基于这个网站全部信息的回答。网站上没有的不要编。先出可以打开的网页文件。</p>
+    </div>
+  </div>
+</section>
+
+
+<footer class="ctrl">
+  <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">16</span></div>
+  <div class="progress"><div class="fill" id="fill"></div></div>
+  <div class="hint"><kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>空格</kbd> 下一页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <button class="nav-btn" id="prevBtn" title="上一页">←</button>
+  <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
+</footer>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length, cur = 0;
+  var fill = document.getElementById('fill');
+  var pageCur = document.getElementById('pageCur');
+  document.getElementById('pageTotal').textContent = String(total).padStart(2,'0');
+  function update(){
+    pageCur.textContent = String(cur+1).padStart(2,'0');
+    fill.style.width = ((cur+1)/total*100) + '%';
+  }
+  function go(i){
+    i = Math.max(0, Math.min(total-1, i));
+    if(i === cur && slides[i].classList.contains('active')){ update(); return; }
+    slides[cur].classList.remove('active');
+    cur = i;
+    slides[cur].classList.add('active');
+    update();
+  }
+  function next(){ go(cur+1); }
+  function prev(){ go(cur-1); }
+  document.getElementById('nextBtn').addEventListener('click', next);
+  document.getElementById('prevBtn').addEventListener('click', prev);
+  function toggleFs(){
+    if(document.fullscreenElement){ document.exitFullscreen(); }
+    else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
+  }
+  document.getElementById('fsBtn').addEventListener('click', toggleFs);
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown'){ e.preventDefault(); next(); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ e.preventDefault(); prev(); }
+    else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
+    else if(e.key === 'Home'){ go(0); }
+    else if(e.key === 'End'){ go(total-1); }
+  });
+  update();
+})();
+</script>
+</body>
+</html>
