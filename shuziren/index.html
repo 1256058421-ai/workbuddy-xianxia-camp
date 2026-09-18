@@ -774,7 +774,7 @@ h2.title .em{
 <footer class="ctrl">
   <div class="pageno"><b id="pageCur">01</b> / <span id="pageTotal">05</span></div>
   <div class="progress"><div class="fill" id="fill"></div></div>
-  <div class="hint">点击 / 操控笔翻页 &nbsp;·&nbsp; <kbd>←</kbd> <kbd>→</kbd> &nbsp;·&nbsp; <kbd>F</kbd> 全屏</div>
+  <div class="hint">翻页笔 / 点击翻页 &nbsp;·&nbsp; <kbd>F</kbd> 全屏 &nbsp;·&nbsp; <kbd>B</kbd> 黑屏</div>
   <button class="nav-btn" id="prevBtn" title="上一页">←</button>
   <button class="nav-btn next" id="nextBtn" title="下一页">→</button>
 </footer>
@@ -814,15 +814,29 @@ h2.title .em{
     else{ document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); }
   }
   document.getElementById('fsBtn').addEventListener('click', function(e){ e.stopPropagation(); toggleFs(); });
+  var veil = document.createElement('div');
+  veil.setAttribute('aria-hidden','true');
+  veil.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#000;display:none';
+  document.body.appendChild(veil);
+  function blackOn(){ return veil.style.display === 'block'; }
+  function setBlack(on){ veil.style.display = on ? 'block' : 'none'; }
+  function clearBlack(){ if(blackOn()){ setBlack(false); lastFlip = Date.now(); return true; } return false; }
   function isNextKey(e){
     var k = e.key, c = e.keyCode || e.which;
-    return k === 'ArrowRight' || k === 'ArrowDown' || k === 'Down' || k === ' ' || k === 'PageDown' || k === 'Enter' || c === 39 || c === 40 || c === 34 || c === 13 || c === 32;
+    return k === 'ArrowRight' || k === 'ArrowDown' || k === 'Down' || k === ' ' || k === 'PageDown' || k === 'Enter' || k === 'n' || k === 'N' || c === 39 || c === 40 || c === 34 || c === 13 || c === 32 || c === 78;
   }
   function isPrevKey(e){
     var k = e.key, c = e.keyCode || e.which;
-    return k === 'ArrowLeft' || k === 'ArrowUp' || k === 'Up' || k === 'PageUp' || k === 'Backspace' || c === 37 || c === 38 || c === 33 || c === 8;
+    return k === 'ArrowLeft' || k === 'ArrowUp' || k === 'Up' || k === 'PageUp' || k === 'Backspace' || k === 'p' || k === 'P' || c === 37 || c === 38 || c === 33 || c === 8 || c === 80;
+  }
+  function typing(e){
+    var t = e.target;
+    return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
   }
   document.addEventListener('keydown', function(e){
+    if(typing(e)) return;
+    if(blackOn()){ e.preventDefault(); clearBlack(); return; }
+    if(e.key === 'b' || e.key === 'B'){ e.preventDefault(); setBlack(true); return; }
     if(isNextKey(e)){ e.preventDefault(); next(); }
     else if(isPrevKey(e)){ e.preventDefault(); prev(); }
     else if(e.key === 'f' || e.key === 'F'){ toggleFs(); }
@@ -830,10 +844,12 @@ h2.title .em{
     else if(e.key === 'End'){ go(total-1); }
   });
   document.addEventListener('keyup', function(e){
+    if(typing(e) || blackOn()) return;
     if(isNextKey(e)){ e.preventDefault(); next(); }
     else if(isPrevKey(e)){ e.preventDefault(); prev(); }
   });
   function onStageClick(e){
+    if(clearBlack()){ e.preventDefault(); return; }
     if(e.target.closest('button, a, input, textarea, .fs-btn, .nav-btn')) return;
     e.preventDefault();
     if(e.type === 'contextmenu' || e.button === 2) prev();
